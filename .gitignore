@@ -1,4 +1,5 @@
 token.pickle
+credentials.json
 .vscode
 .ds_store
 *.pyc

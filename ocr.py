@@ -7,6 +7,12 @@ Specifically edited to apply towards reading the object number on a painting's t
 in the Nasher Museum's storage space
 
 TODO: make better
+sigma=0.33):
+    v = np.median(image)
+
+    lower = int(max(0, (1.0 - sigma) * v))
+    upper = int(min(255, (1.0 + sigma) * v))
+    edged = cv2.Canny(image, lower, upper)
 '''
 # USAGE - IGNORE THIS
 # python ocr_handwriting.py --model handwriting.model --image images/umbc_address.png
