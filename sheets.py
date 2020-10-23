@@ -7,6 +7,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from datetime import datetime
 
 
 class Sheet:
@@ -71,6 +72,9 @@ class Sheet:
         :param rows: a nested list containing the rows to append to the spreadsheet
         :return: returns nothing
         '''
+        for i in rows:
+            i.insert(0, datetime.now().isoformat())
+
         body = {
             'values': rows
         }
