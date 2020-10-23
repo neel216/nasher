@@ -66,16 +66,16 @@ def read_sheet():
         for row in values:
             print(row)
 
-def add_row(row):
+def add_rows(rows):
     '''
-    Adds a row to the bottom of the Google Spreadsheet Document
+    Adds rows to the bottom of the Google Spreadsheet Document
 
     TODO: add ability to add multiple rows at once (more info in trello)
     '''
     sheet = load_sheet()
     value_input_option = 'RAW'
     
-    values = [row]
+    values = rows
     body = {
         'values': values
     }
@@ -91,7 +91,7 @@ def add_row(row):
 
 if __name__ == '__main__':
     read_sheet()
-
+    '''
     import time
     vals = []
     for i in range(100):
@@ -99,6 +99,11 @@ if __name__ == '__main__':
         add_row([1, 2, 3])
         end = time.time()
         vals.append(end - start)
-
     import statistics
     print(statistics.mean(vals))
+    '''
+    rows = [
+        ['neel', 'derrick', 'cole'],
+        [1, 2, 3]
+    ]
+    add_rows(rows)
