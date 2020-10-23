@@ -15,9 +15,7 @@ class Sheet:
         Constructs a Sheet object.
 
         :param spreadsheet_id: the ID of the spreadsheet taken directly from the document's URL
-        :type spreadsheet_id: str
         :param spreadsheet_range: the range of the spreadsheet to read (SheetName!topLeftCell:bottomRightCell))
-        :type spreadsheet_range: str
         :return: returns nothing
         '''
         self.scopes = ['https://www.googleapis.com/auth/spreadsheets']
@@ -54,7 +52,6 @@ class Sheet:
         Reads values from the Google Spreadsheet Document over the specified range
 
         :return: a nested list where each list is a row and each entry in the list is a cell
-        :rtype: list 
         '''
         result = self.sheet.values().get(spreadsheetId=self.id, range=self.range).execute()
         values = result.get('values', [])
@@ -72,7 +69,6 @@ class Sheet:
         Appends rows to the Google Spreadsheet Document
 
         :param rows: a nested list containing the rows to append to the spreadsheet
-        :type rows: list
         :return: returns nothing
         '''
         body = {
