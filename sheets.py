@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from __future__ import print_function
 import pickle
 import os.path
 from googleapiclient.discovery import build
@@ -11,17 +10,18 @@ from datetime import datetime
 
 
 class Sheet:
-    def __init__(self, spreadsheet_id, spreadsheet_range):
+    def __init__(self, spreadsheet_id, spreadsheet_range, value_input_option='RAW'):
         '''
         Constructs a Sheet object.
 
         :param spreadsheet_id: the ID of the spreadsheet taken directly from the document's URL
         :param spreadsheet_range: the range of the spreadsheet to read (SheetName!topLeftCell:bottomRightCell))
+        :param value_input_option: the way to modify cell entries into the spreadsheet
         :return: returns nothing
         '''
         self.scopes = ['https://www.googleapis.com/auth/spreadsheets']
         self.id = spreadsheet_id
-        self.value_input_option = 'RAW'
+        self.value_input_option = value_input_option
         self.range = spreadsheet_range
 
         creds = None
@@ -37,7 +37,7 @@ class Sheet:
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    'credentials.json', SCOPES)
+                    'credentials.json', self.scopes)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
             with open('token.pickle', 'wb') as token:
@@ -86,6 +86,8 @@ class Sheet:
             body=body).execute()
         
         print(f'{result.get("updates").get("updatedCells")} cells updated.')
+
+        return True
 
 
 if __name__ == '__main__':
