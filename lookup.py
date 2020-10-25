@@ -24,13 +24,26 @@ class Lookup:
         pd.set_option('display.max_colwidth', None)
 
         self.dimensions = pd.read_csv(dim_path)
+        self.loc_path = loc_path
         self.locations = pd.read_csv(loc_path)
         del self.dimensions['Unnamed: 0']
         del self.locations['Unnamed: 0']
 
-    def get_rows(self, df, col, val):
+    def get_rows_contains(self, df, col, val):
         '''
-        Returns the rows of a dataframe that have a certain value
+        Returns the rows of a dataframe that have contain a value
+        in a certain column
+        
+        :param df: the dataframe to search
+        :param col: the column to search in the dataframe
+        :param val: the value to check for in the column
+        :return: a dataframe containing the rows that have the value in the column
+        '''
+        return df[df[col].str.contains(val)]
+    
+    def get_rows_exact(self, df, col, val):
+        '''
+        Returns the rows of a dataframe that have have a value
         in a certain column
         
         :param df: the dataframe to search
@@ -39,14 +52,13 @@ class Lookup:
         :return: a dataframe containing the rows that have the value in the column
         '''
         return df.loc[df[col] == val]
-
+    
     def get_info(self, objectID):
         '''
         Given a painting's object number, returns a list of dictionaries containing
         information about the painting(s) with that object number
-        TODO: handle .A, .B, etc. letters at end of objectID by deleting them?
 
-        :param objectID: a string that represents a painting's object number
+        :param objectID: string that represents a painting's object number
         :return: an array of dictionaries containing information about the painting(s) with that object number
         '''
         if len(objectID.split('.')) == 2:
@@ -54,15 +66,18 @@ class Lookup:
         else:
             objectNumber = objectID
         
-        dims = self.get_rows(self.dimensions, 'objectID', objectNumber)
+        dims = self.get_rows_contains(self.dimensions, 'objectID', objectNumber)
+        _dims = {}
         if len(dims) == 0:
             dims_ = 'Object Number not found'
         else:
-            dims_ = [dims['width'].item(), dims['height'].item(), dims['depth'].item()]
-        
-        loc = self.get_rows(self.locations, 'objectID', objectNumber)
+            for i in dims.iterrows():
+                _dims[i[1]['objectID']] = [i[1]['width'], i[1]['height'], i[1]['depth']]
+
+        loc = self.get_rows_contains(self.locations, 'objectID', objectNumber)
         items = []
         for i in loc.iterrows():
+            index = i[0]
             room = i[1]['room']
             locationType = i[1]['locationType']
             locationLetter = i[1]['locationLetter'] if type(i[1]['locationLetter']) != type(np.nan) else ''
@@ -70,11 +85,16 @@ class Lookup:
                 location = f'{int(i[1]["locationID"])}{locationLetter}'
             except ValueError:
                 location = 'unknown'
+            try:
+                dims_ = _dims[i[1]['objectID']]
+            except KeyError:
+                dims_ = 'Object Number not found'
             artist = i[1]['artist']
             otherInfo = i[1]['info']
 
             info = {
-                'objectID': objectNumber,
+                'index': index,
+                'objectID': i[1]['objectID'],
                 'artist': artist,
                 'room': room,
                 'locationType': locationType,
@@ -89,8 +109,8 @@ class Lookup:
         '''
         Given a dictionary containing information about a painting, returns a string with that information
 
-        :param data: a dictionary containing information about a painting
-        :return: a string in a readable format describing a painting
+        :param data: dictionary containing information about a painting
+        :return: string in a readable format describing a painting
         '''
         if data['dimensions'] == 'Object Number not found':
             dimensions_ = 'unknown'
@@ -112,8 +132,8 @@ class Lookup:
         Takes a rackID and returns a list of dictionaries describing
         the painting(s) on that rack
 
-        :param rackID: a string representing the ID of a rack (i.e. 3A, 27, 30B)
-        :return: an array of dictionaries describing the painting(s) on that rack
+        :param rackID: string representing the ID of a rack (i.e. 3A, 27, 30B)
+        :return: array of dictionaries describing the painting(s) on that rack
         '''
         if len(rackID) == 3:
             rackNumber = int(rackID[:-1])
@@ -125,7 +145,7 @@ class Lookup:
             rackNumber = int(rackID)
             rackLetter = np.nan
             
-        loc_ = self.get_rows(self.locations, 'locationID', rackNumber)
+        loc_ = self.get_rows_exact(self.locations, 'locationID', rackNumber)
         if type(rackLetter) == type('A'):
             loc__ = loc_.loc[loc_['locationLetter'] == rackLetter]
         else:
@@ -138,15 +158,50 @@ class Lookup:
         
         return items
 
+    def edit_location(self, index, new_room, rackID):
+        '''
+        Given the index of a row in the locations dataframe, changes the room
+        and locationID and locationLetter to the locations given
+
+        :param index: integer to index the dataframe
+        :param new_room: string to replace the old room value
+        :param rackID: string to replace the locationID and locationLetter
+        :return: returns nothing useful
+        '''
+        if len(rackID) == 3:
+            rackNumber = float(rackID[:-1])
+            rackLetter = rackID[-1]
+        elif len(rackID) == 2 and len(''.join(re.findall('[a-zA-Z]+', rackID))) == 1:
+            rackNumber = float(rackID[0])
+            rackLetter = rackID[-1]
+        else:
+            rackNumber = float(rackID)
+            rackLetter = np.nan
+
+        self.locations.iloc[index, self.locations.columns.get_loc('room')] = new_room
+        self.locations.iloc[index, self.locations.columns.get_loc('locationID')] = rackNumber
+        self.locations.iloc[index, self.locations.columns.get_loc('locationLetter')] = rackLetter
+
+        self.refresh_csv()
+        return True
+
+    def refresh_csv(self):
+        '''
+        Overrides the existing locations CSV to ensure data is saved if program is stopped
+
+        :return: returns nothing useful
+        '''
+        self.locations.to_csv(self.loc_path)
+        return True
 
 if __name__ == '__main__':
     lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
 
-    number = '2015.2'
+    number = '2003.4.3'
     for i in lookup.get_info(number):
         print(lookup.to_string(i), '\n')
 
     print('\n')
 
-    for i in lookup.get_rack('62J'):
+    for i in lookup.get_rack('46B'):
         print(lookup.to_string(i), '\n')
