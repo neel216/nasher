@@ -23,6 +23,7 @@ class Lookup:
         '''
         pd.set_option('display.max_colwidth', None)
 
+        self.dim_path = dim_path
         self.dimensions = pd.read_csv(dim_path)
         self.loc_path = loc_path
         self.locations = pd.read_csv(loc_path)
@@ -184,14 +185,48 @@ class Lookup:
 
         self.refresh_csv()
         return True
+    
+    def add_painting(self, objectID, room, locationType, rackID, artist, title_and_year, dims):
+        '''
+        Adds a painting with the given information to the database
+
+        :param objectID: the object number of the new painting (string)
+        :param room: the room the new painting is being stored in (string)
+        :param locationType: the type of screen the painting is being stored on
+        :param rackID: the rack number and rack letter the painting is being stored on
+        :param artist: the author of the painting
+        :param title_and_year: the title of the painting, and the year the painting was made (separated by a comma and space)
+        :param dimensions: an array with 3 float numbers describing the width, height, and depth of the painting in centimeters
+        :return: returns nothing useful
+        '''
+        if len(rackID) == 3:
+            rackNumber = float(rackID[:-1])
+            rackLetter = rackID[-1]
+        elif len(rackID) == 2 and len(''.join(re.findall('[a-zA-Z]+', rackID))) == 1:
+            rackNumber = float(rackID[0])
+            rackLetter = rackID[-1]
+        else:
+            rackNumber = float(rackID)
+            rackLetter = np.nan
+        
+        dims_ = ' x '.join(str(d) for d in dims) + ' cm'
+        width = dims[0]
+        height = dims[1]
+        depth = dims[2]
+
+        self.locations.loc[len(self.locations.index)] = [objectID, room, locationType, rackNumber, rackLetter, artist, title_and_year]
+        self.dimensions.loc[len(self.dimensions.index)] = [objectID, dims_, width, height, depth]
+        self.refresh_csv()
+        return True
 
     def refresh_csv(self):
         '''
-        Overrides the existing locations CSV to ensure data is saved if program is stopped
+        Overrides the existing CSVs to ensure data is saved if program is stopped
 
         :return: returns nothing useful
         '''
         self.locations.to_csv(self.loc_path)
+        self.dimensions.to_csv(self.dim_path)
         return True
 
 if __name__ == '__main__':

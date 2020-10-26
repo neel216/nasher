@@ -62,7 +62,20 @@ def lookup_rack():
         c += 1
 
 def add_painting():
-    pass
+    objectID = input('What is the object number of the new painting? ')
+    room = input('What room will the painting be stored in? ')
+    locationType = input('What kind of rack will the painting be stored on (i.e. Screen, Wall Screen)? ')
+    rackID = input('What rack will the painting be stored on (i.e. 48A, 27)? ')
+    author = input('Who is the author of the painting? ')
+    title_and_year = input('What is the title and the year of the painting (separate with a comma and space)? ')
+    width = float(input('What is the width of the painting (in cm)? '))
+    height = float(input('What is the height of the painting (in cm)? '))
+    depth = float(input('What is the depth of the painting (in cm)? '))
+    dims = [width, height, depth]
+
+    sheet.add_rows([[objectID, author, title_and_year + '\nDimensions: ' + ' x '.join(str(d) for d in dims) + ' cm', '', room + ', ' + locationType + ' ' + rackID]])
+    lookup.add_painting(objectID, room, locationType, rackID, author, title_and_year, dims)
+    print('Painting added to database.')
 
 
 lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
