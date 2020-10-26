@@ -13,7 +13,7 @@ def change_location():
     choice = input(f'Is {objectID} correct? [y/n] ')
     print('\n')
     if choice == 'n':
-        objectID = input('Enter the correct objectID. ')
+        objectID = input('Enter the correct object number: ')
         print('\n')
 
     # Allow user to select painting from lookup results
@@ -42,6 +42,28 @@ def change_location():
     # update local data
     lookup.edit_location(painting['index'], new_room, new_loc)
 
+def lookup_painting():
+    objectID = input('Enter an object number: ')
+    print('\n')
+
+    c = 1
+    paintings = lookup.get_info(objectID)
+    for i in paintings:
+        print(str(c) + '.', lookup.to_string(i), '\n')
+        c += 1
+
+def lookup_rack():
+    rack = input('Enter a rack number/ID (i.e. 48A, 27): ')
+    print('\n')
+
+    c = 1
+    for i in lookup.get_rack(rack):
+        print(str(c) + '.', lookup.to_string(i), '\n')
+        c += 1
+
+def add_painting():
+    pass
+
 
 lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
 sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C1000')
@@ -53,11 +75,11 @@ choice = input("a. Change a painting's location\nb. Lookup a painting\nc. Lookup
 if choice == 'a':
     change_location()
 elif choice == 'b':
-    pass
+    lookup_painting()
 elif choice == 'c':
-    pass
+    lookup_rack()
 elif choice == 'd':
-    pass
+    pass # image recognition stuff would get called here
 elif choice == 'e':
-    pass
+    add_painting()
 
