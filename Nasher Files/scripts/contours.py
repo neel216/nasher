@@ -17,7 +17,7 @@ def find_contours(img):
             return screenCnt
 
 
-def outline_contours(win_name, img, contours, draw_type):
+def outline_contours(img, contours, draw_type="RAW_CONTOURS"):
     if contours is not None:
         if draw_type == "RAW_CONTOURS":
             img = cv2.drawContours(img, [contours], -1, (255, 0, 0), 2)
@@ -25,4 +25,5 @@ def outline_contours(win_name, img, contours, draw_type):
             rect = cv2.minAreaRect(contours)
             box = np.int0(cv2.boxPoints(rect))
             img = cv2.drawContours(img, [box], -1, (255, 0, 0), 2)
-    cv2.imshow(win_name, img)
+
+    return img
