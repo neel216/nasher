@@ -14,10 +14,12 @@ from picamera import PiCamera
 import time
 import cv2
 import numpy as np
-from canny import canny
 
+from canny import canny
 from contours import find_contours
 from contours import outline_contours
+from transform import order_points
+from transform import four_point_transform
 import imutils
 
 freeze_frame = False
@@ -42,14 +44,12 @@ def onMouse(event, x, y, flags, param):
             tran_stage += 1
             tran_img = image
             rawCapture.truncate(0)
-            camera.close()
-            print("Image captured. Click again to process and display perspective transform.")
-        elif tran_stage == 1:
-            tran_stage += 1
-            print("Image processed. Click again to return to scanning mode.")
+            print("Image captured and processed. Click again to review information.")
         elif tran_stage == 2:
+            tran_stage += 1
+            print("Modify information? Click again to return to scanning mode.")
+        elif tran_stage == 3:
             tran_stage = 0
-            camera_init(camera, (640, 480))
             print("Returning to scanning mode.")
 
 
@@ -59,16 +59,24 @@ camera_init(camera, (640, 480))
 rawCapture = PiRGBArray(camera, size=camera.resolution)
 window_title = "Video Feed"
 cv2.namedWindow(window_title)
+cv2.setMouseCallback(window_title, onMouse)
+cont = []
 
 for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-    image = frame.array
-    edged = canny(image)
-    cv2.setMouseCallback(window_title, onMouse)
+    if(tran_stage == 0):
+        image = frame.array
 
-    cont = find_contours(edged)
     if freeze_frame:  # if true, wait for keypress to advance to next frame.
         cv2.waitKey(0)
-    outline_contours(window_title, image, cont, "RAW_CONTOURS")
+
+    if(tran_stage == 0):
+        cv2.imshow(window_title, image)
+    elif(tran_stage == 1):
+        edged = canny(image)
+        cont = find_contours(edged)
+        cntrd = outline_contours(image, cont, "RAW_CONTOURS")
+        cv2.imshow(window_title, cntrd)
+        tran_stage += 1
 
 
     rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
