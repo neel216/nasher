@@ -21,7 +21,7 @@ class Lookup:
         :param loc_path: the path of the locations CSV file
         :return: returns nothing
         '''
-        pd.set_option('display.max_colwidth', None)
+        #pd.set_option('display.max_colwidth', None)
 
         self.dim_path = dim_path
         self.dimensions = pd.read_csv(dim_path)
@@ -32,7 +32,7 @@ class Lookup:
 
     def get_rows_contains(self, df, col, val):
         '''
-        Returns the rows of a dataframe that have contain a value
+        Returns the rows of a dataframe that contain a value
         in a certain column
         
         :param df: the dataframe to search
@@ -44,7 +44,7 @@ class Lookup:
     
     def get_rows_exact(self, df, col, val):
         '''
-        Returns the rows of a dataframe that have have a value
+        Returns the rows of a dataframe that have a value
         in a certain column
         
         :param df: the dataframe to search
