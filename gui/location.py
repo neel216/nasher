@@ -15,6 +15,7 @@ class Location:
         self.success = success
         self.painting = painting
         self.lookup = lookup
+        self.sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
 
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
@@ -76,8 +77,7 @@ class Location:
         delete.grid(row=7, column=2)
 
     def submitRack(self):
-        sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
-        sheet.add_rows([[self.painting['objectID'], self.painting['artist'], self.painting['otherInfo'], self.painting['room'] + ', ' + self.painting['location'], 'Nasher Painting Storage Room' + ', ' + self.rack.get()]])
+        self.sheet.add_rows([[self.painting['objectID'], self.painting['artist'], self.painting['otherInfo'], self.painting['room'] + ', ' + self.painting['location'], 'Nasher Painting Storage Room' + ', ' + self.rack.get()]])
 
         # update local data
         #self.lookup.edit_location(painting['index'], 'Nasher Painting Storage Room', self.rack.get())

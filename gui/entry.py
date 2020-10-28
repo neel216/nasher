@@ -33,12 +33,10 @@ class Entry:
 
     def appendChar(self, char):
         i = len(self.object_id.get())
-        print(self.object_id.get(), i, char)
         self.entryBox.insert(i, char)
     
     def deleteChar(self):
         i = len(self.object_id.get()) - 1
-        print(i)
         self.entryBox.delete(i)
 
     def entryKeyboard(self):
