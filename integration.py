@@ -79,7 +79,7 @@ def add_painting():
 
 
 lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
-sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C1000')
+sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
 
 
 # Menu to allow user to choose what to do

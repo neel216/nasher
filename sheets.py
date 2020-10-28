@@ -91,7 +91,7 @@ class Sheet:
 
 
 if __name__ == '__main__':
-    sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C1000')
+    sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
 
     sheet.read_sheet()
 
