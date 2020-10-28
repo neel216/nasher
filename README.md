@@ -7,3 +7,7 @@ Developed using Python 3.8
 Install dependencies by navigating to the repo directory and executing `pip3 install -r requirements.txt`
 
 The `credentials.json` file for the Google Sheets module can be accessed by contacting the repo owner.
+
+## Usage
+
+Run `python3 gui.py` to run the storage management system
