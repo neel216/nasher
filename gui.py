@@ -1,30 +1,16 @@
 import tkinter as tk
+from gui import mainMenu
 
-root = tk.Tk()
 
-content = tk.Frame(root)
-frame = tk.Frame(content, borderwidth=5, relief="ridge", width=200, height=100)
-namelbl = tk.Label(content, text="Name")
-name = tk.Entry(content)
+window = tk.Tk()
+window.title('Nasher Database System')
+window.geometry('480x640') # Set size of app
+window.resizable(0, 0) # Don't allow resizing in the x or y direction
 
-onevar = tk.BooleanVar(value=True)
-twovar = tk.BooleanVar(value=False)
-threevar = tk.BooleanVar(value=True)
+root = tk.Frame(master=window)
+root.pack_propagate(0) # Don't allow the widgets inside to determine the frame's width / height
+root.pack(fill=tk.BOTH, expand=1) # Expand the frame to fill the root window
 
-one = tk.Checkbutton(content, text="One", variable=onevar, onvalue=True)
-two = tk.Checkbutton(content, text="Two", variable=twovar, onvalue=True)
-three = tk.Checkbutton(content, text="Three", variable=threevar, onvalue=True)
-ok = tk.Button(content, text="Okay")
-cancel = tk.Button(content, text="Cancel")
+gui = mainMenu.MainMenu(root)
 
-content.grid(column=0, row=0)
-frame.grid(column=0, row=0, columnspan=3, rowspan=2)
-namelbl.grid(column=3, row=0, columnspan=2)
-name.grid(column=3, row=1, columnspan=2)
-one.grid(column=0, row=3)
-two.grid(column=1, row=3)
-three.grid(column=2, row=3)
-ok.grid(column=3, row=3)
-cancel.grid(column=4, row=3)
-
-root.mainloop()
+window.mainloop()
