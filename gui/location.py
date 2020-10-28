@@ -32,8 +32,8 @@ class Location:
         ok.grid(row=8, column=0, columnspan=3)
 
 
-        self.location.grid_columnconfigure([0, 1, 2, 8], weight=1)
-        self.location.grid_rowconfigure([1, 2], weight=1)
+        self.location.grid_columnconfigure([0, 1, 2], weight=1)
+        self.location.grid_rowconfigure([1, 2, 8], weight=1)
         self.location.grid_rowconfigure([3, 4, 5, 6, 7], weight=1)
 
     def appendChar(self, char):

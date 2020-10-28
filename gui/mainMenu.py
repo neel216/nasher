@@ -54,6 +54,12 @@ class MainMenu:
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
+    
+    def correct_objectID(self, objectID):
+        self.objectID = objectID
+
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID)
+        self.selection.show()
 
     def select(self, selectedObjectID, lookup):
         self.selectedObjectID = selectedObjectID
