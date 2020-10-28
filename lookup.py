@@ -62,10 +62,10 @@ class Lookup:
         :param objectID: string that represents a painting's object number
         :return: an array of dictionaries containing information about the painting(s) with that object number
         '''
-        if len(objectID.split('.')) == 2:
-            objectNumber = objectID + '.1'
-        else:
-            objectNumber = objectID
+        #if len(objectID.split('.')) == 2:
+        #    objectNumber = objectID + '.1'
+        #else:
+        objectNumber = objectID
         
         dims = self.get_rows_contains(self.dimensions, 'objectID', objectNumber)
         _dims = {}
