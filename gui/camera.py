@@ -33,8 +33,8 @@ class Camera:
         self.video_stream()
 
     def video_stream(self):
-        _, frame = self.cap.read()
-        self.frame = cv2.flip(frame, 1)
+        _, self.frame = self.cap.read()
+        #self.frame = cv2.flip(frame, 1)
         cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)
         img = Image.fromarray(cv2image)
         img.thumbnail((464, 464), Image.ANTIALIAS)
