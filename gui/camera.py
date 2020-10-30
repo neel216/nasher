@@ -93,7 +93,9 @@ class Camera:
         '''
         if rpi:
             image = self.camera_.capture(self.rawCapture, format="bgr", use_video_port=True)
-            self.frame = image.array
+            #self.frame = image.array
+            cv2.imshow('frame', image.array)
+            cv2.waitKey(0)
 
             cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)  # convert colors from BGR to RGBA
             img = Image.fromarray(cv2image)  # convert image for PIL
