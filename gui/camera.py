@@ -92,6 +92,17 @@ class Camera:
             self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
             print('Captured %dx%d image' % (
                 self.rawCapture.array.shape[1], self.rawCapture.array.shape[0]))
+
+            image = self.rawCapture.array
+            cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(cv2image)
+            img.thumbnail((464, 464), Image.ANTIALIAS)
+            imgtk = ImageTk.PhotoImage(image=img)
+            self.lmain.imgtk = imgtk
+            self.lmain.configure(image=imgtk)
+
+
+
             self.rawCapture.truncate(0)
 
 
