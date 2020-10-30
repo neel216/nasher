@@ -3,6 +3,9 @@ import tkinter as tk
 from tkinter import ttk
 from tensorflow.keras.models import load_model
 from ocr import process_ocr
+from lookup import Lookup
+from sheets import Sheet
+
 
 class MainMenu:
     def __init__(self, parent):
@@ -15,8 +18,9 @@ class MainMenu:
         self.image = None
         self.objectID = ''
         self.selectedObjectID = ''
-        self.lookup = None
+        self.lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
         self.model = load_model('data/handwriting.model')
+        self.sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
         print('[INFO] Loaded model')
 
         self.parent = parent
@@ -27,9 +31,9 @@ class MainMenu:
 
         self.success = success.Success(self.parent, self.mainMenu, self)
         print('[INFO] Loaded success screen')
-        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup)
+        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet)
         print('[INFO] Loaded location screen')
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID, self.lookup)
         print('[INFO] Loaded selection screen')
         self.entry = entry.Entry(self.parent, self.mainMenu, self)
         print('[INFO] Loaded entry screen')
@@ -64,18 +68,17 @@ class MainMenu:
         process_ocr(self.model, self.image)
         self.objectID = '2016.19.1' # process image and get this from OCR
 
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
     
     def correct_objectID(self, objectID):
         self.objectID = objectID
 
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup)
         self.selection.show()
 
-    def select(self, selectedObjectID, lookup):
+    def select(self, selectedObjectID):
         self.selectedObjectID = selectedObjectID
-        self.lookup = lookup
-        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup)
+        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet)
         self.location.show()

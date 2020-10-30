@@ -1,12 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-from lookup import Lookup
 
 
 class Selection:
-    def __init__(self, parent, menu, mainMenu, location, objectID):
-        self.lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
+    def __init__(self, parent, menu, mainMenu, location, objectID, lookup):
+        self.lookup = lookup
         self.selection = tk.Frame(master=parent)
         self.selection.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -41,7 +40,7 @@ class Selection:
     def select(self):
         selectedLine = self.options.curselection()[0]
         selectedID = self.paintings[selectedLine]
-        self.mainMenu.select(selectedID, self.lookup)
+        self.mainMenu.select(selectedID)
 
     def show(self):
         self.selection.lift()

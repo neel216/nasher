@@ -1,11 +1,10 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-from sheets import Sheet
 
 
 class Location:
-    def __init__(self, parent, menu, mainMenu, success, painting, lookup):
+    def __init__(self, parent, menu, mainMenu, success, painting, lookup, sheet):
         self.location = tk.Frame(master=parent)
         self.location.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -15,7 +14,8 @@ class Location:
         self.success = success
         self.painting = painting
         self.lookup = lookup
-        self.sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
+        self.sheet = sheet
+        
 
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
