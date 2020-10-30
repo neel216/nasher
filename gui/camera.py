@@ -57,6 +57,7 @@ class Camera:
                 self.lmain.imgtk = imgtk
                 self.lmain.configure(image=imgtk)
                 self.lmain.after(10, self.video_stream)
+                self.rawCapture.truncate(0)
         else:
             _, self.frame = self.cap.read()
             #self.frame = cv2.flip(frame, 1)
