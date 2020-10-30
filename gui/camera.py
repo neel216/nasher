@@ -29,10 +29,10 @@ class Camera:
         self.lmain.grid(row=1, column=0)
 
         if rpi:
-            self.camera = PiCamera()
-            self.camera.resolution = (464, 464)
-            self.camera.framerate = 32
-            self.rawCapture = PiRGBArray(self.camera, size=self.camera.resolution)
+            self.camera_ = PiCamera()
+            self.camera_.resolution = (464, 464)
+            self.camera_.framerate = 32
+            self.rawCapture = PiRGBArray(self.camera_, size=self.camera_.resolution)
         else:
             self.cap = cv2.VideoCapture(0)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
@@ -48,7 +48,7 @@ class Camera:
 
     def video_stream(self):
         if rpi:
-            for frame in self.camera.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
+            for frame in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
                 image = frame.array
                 cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
                 img = Image.fromarray(cv2image)
