@@ -5,7 +5,9 @@ from PIL import Image, ImageTk
 try:
     from picamera.array import PiRGBArray
     from picamera import PiCamera
-    import time
+    print('On Raspberry Pi')
+    import os
+    os.system("sudo modprobe bcm2835-v4l2")
     rpi = False
 except ImportError:
     print('Not on Raspberry Pi')
@@ -29,6 +31,7 @@ class Camera:
         self.lmain.grid(row=1, column=0)
 
         if rpi:
+            '''
             print('[INFO] Loading Raspberry Pi Camera')
             self.camera_ = PiCamera()
             print('[INFO] Raspberry Pi Camera Initialized')
@@ -38,8 +41,17 @@ class Camera:
             print('[INFO] Raspberry Pi Camera FPS set')
             self.rawCapture = PiRGBArray(self.camera_, size=self.camera_.resolution)
             print('[INFO] Raspberry Pi Camera Raw Capture set')
-        else:
+            '''
+            print('[INFO] Loaded camera')
             self.cap = cv2.VideoCapture(0)
+            print('[INFO] Setting camera resolution')
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 464)
+            self.current_image = None
+        else:
+            print('[INFO] Loaded camera')
+            self.cap = cv2.VideoCapture(0)
+            print('[INFO] Setting camera resolution')
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 464)
 
@@ -55,6 +67,7 @@ class Camera:
     def video_stream(self):
         if rpi:
             print('[INFO] Loading Raspberry Pi Camera video stream')
+            '''
             for frame in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
                 image = frame.array
                 cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
@@ -65,7 +78,18 @@ class Camera:
                 self.lmain.configure(image=imgtk)
                 self.lmain.after(10, self.video_stream)
                 self.rawCapture.truncate(0)
+            '''
+            ok, frame = self.cap.read()  # read frame from video stream
+            if ok:  # frame captured without any errors
+                cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)  # convert colors from BGR to RGBA
+                self.current_image = Image.fromarray(cv2image)  # convert image for PIL
+                imgtk = ImageTk.PhotoImage(image=self.current_image)  # convert image for tkinter
+                self.lmain.imgtk = imgtk  # anchor imgtk so it does not be deleted by garbage-collector
+                self.lmain.configure(image=imgtk)  # show the image
+
+            self.lmain.after(10, self.video_stream)
         else:
+            print('[INFO] Loading video stream')
             _, self.frame = self.cap.read()
             #self.frame = cv2.flip(frame, 1)
             cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)
