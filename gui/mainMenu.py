@@ -1,6 +1,8 @@
 from gui import camera, verification, entry, selection, location, success
 import tkinter as tk
 from tkinter import ttk
+from tensorflow.keras.models import load_model
+from ocr import process_ocr
 
 class MainMenu:
     def __init__(self, parent):
@@ -14,6 +16,7 @@ class MainMenu:
         self.objectID = ''
         self.selectedObjectID = ''
         self.lookup = None
+        self.model = load_model('data/handwriting.model')
 
         self.parent = parent
         self.mainMenu = tk.Frame(master=self.parent)
@@ -49,6 +52,7 @@ class MainMenu:
 
     def capture_image(self):
         self.image = self.camera.get_picture()
+        process_ocr(self.model, self.image)
         self.objectID = '2016.19.1' # process image and get this from OCR
 
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID)
