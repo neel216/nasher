@@ -17,20 +17,29 @@ class MainMenu:
         self.selectedObjectID = ''
         self.lookup = None
         self.model = load_model('data/handwriting.model')
+        print('[INFO] Loaded model')
 
         self.parent = parent
         self.mainMenu = tk.Frame(master=self.parent)
         self.mainMenu.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         self.mainMenu.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
+        print('[INFO] Started GUI')
 
         self.success = success.Success(self.parent, self.mainMenu, self)
+        print('[INFO] Loaded success screen')
         self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup)
+        print('[INFO] Loaded location screen')
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID)
+        print('[INFO] Loaded selection screen')
         self.entry = entry.Entry(self.parent, self.mainMenu, self)
+        print('[INFO] Loaded entry screen')
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
+        print('[INFO] Loaded verification screen')
         self.camera = camera.Camera(self.parent, self.mainMenu, self, self.verification)
+        print('[INFO] Loaded camera screen')
 
         self.show()
+        print('[INFO] Loaded main menu')
 
     def show(self):
         button1 = ttk.Button(self.mainMenu, text='Change a Painting\'s Location', command=self.camera.show)
