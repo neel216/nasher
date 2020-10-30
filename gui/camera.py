@@ -29,10 +29,15 @@ class Camera:
         self.lmain.grid(row=1, column=0)
 
         if rpi:
+            print('[INFO] Loading Raspberry Pi Camera')
             self.camera_ = PiCamera()
+            print('[INFO] Raspberry Pi Camera Initialized')
             self.camera_.resolution = (464, 464)
+            print('[INFO] Raspberry Pi Camera Resolution set')
             self.camera_.framerate = 32
+            print('[INFO] Raspberry Pi Camera FPS set')
             self.rawCapture = PiRGBArray(self.camera_, size=self.camera_.resolution)
+            print('[INFO] Raspberry Pi Camera Raw Capture set')
         else:
             self.cap = cv2.VideoCapture(0)
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
@@ -44,10 +49,12 @@ class Camera:
         self.camera.grid_columnconfigure(0, weight=1)
         self.camera.grid_rowconfigure(2, weight=1)
 
+        print('[INFO] Raspberry Pi Camera Camera loaded')
         self.video_stream()
 
     def video_stream(self):
         if rpi:
+            print('[INFO] Loading Raspberry Pi Camera video stream')
             for frame in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
                 image = frame.array
                 cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
