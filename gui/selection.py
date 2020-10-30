@@ -21,12 +21,12 @@ class Selection:
         title = tk.Label(self.selection, text='Select the correct painting', font=tkFont.Font(size=30))
         title.grid(row=1, column=0)
 
-        self.options = tk.Listbox(self.selection, width=50, height=25)
+        self.options = tk.Listbox(self.selection, width=70, height=15)
 
         c = 1
         self.paintings = self.lookup.get_info(objectID)
         for i in self.paintings:
-            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}"
+            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {' x '.join(str(d) for d in i['dimensions'])}"
             self.options.insert(c, output)
             c += 1
 
