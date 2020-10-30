@@ -89,12 +89,11 @@ class Camera:
             self.rawCapture.truncate(0)
         '''
         if rpi:
-            self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
+            self.camera_.capture(self.rawCapture, 'rgba', resize=(464, 464))
 
-            image = self.rawCapture.array
-            cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
-            img = Image.fromarray(cv2image)
-            img.thumbnail((464, 464), Image.ANTIALIAS)
+            self.image = self.rawCapture.array
+            img = Image.fromarray(self.image)
+            #img.thumbnail((464, 464), Image.ANTIALIAS)
             imgtk = ImageTk.PhotoImage(image=img)
             self.lmain.imgtk = imgtk
             self.lmain.configure(image=imgtk)
@@ -118,6 +117,8 @@ class Camera:
     def get_picture(self):
         #self.cap.release()
         #cv2.destroyAllWindows()
+        if rpi:
+            self.frame = cv2.cvtColor(self.image, cv2.RGBA2BGR)
         return self.frame
 
     def show(self):
