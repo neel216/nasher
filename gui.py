@@ -4,7 +4,9 @@ from gui import mainMenu
 
 window = tk.Tk()
 window.title('Nasher Database System')
-window.geometry('1920x1080') # Set size of app
+width  = window.winfo_screenwidth()
+height = window.winfo_screenheight()
+window.geometry(f'{width}x{height}')
 window.resizable(0, 0) # Don't allow resizing in the x or y direction
 
 root = tk.Frame(master=window)
