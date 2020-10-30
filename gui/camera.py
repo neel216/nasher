@@ -58,6 +58,7 @@ class Camera:
             print('[INFO] Raspberry Pi Camera Raw Capture set')
             self.camera_.resolution = (464, 464)
             print('[INFO] Raspberry Pi Camera Resolution set')
+            self.camera_.framerate = 32
 
         else:
             print('[INFO] Loaded camera')
@@ -76,23 +77,12 @@ class Camera:
         self.video_stream()
 
     def video_stream(self):
-        '''
-        for frame in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
-            image = frame.array
-            cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
-            img = Image.fromarray(cv2image)
-            img.thumbnail((464, 464), Image.ANTIALIAS)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.lmain.imgtk = imgtk
-            self.lmain.configure(image=imgtk)
-            self.lmain.after(10, self.video_stream)
-            self.rawCapture.truncate(0)
-        '''
         if rpi:
-            self.camera_.capture(self.rawCapture, 'rgba', resize=(464, 464))
+            self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
 
-            self.image = self.rawCapture.array
-            img = Image.fromarray(self.image)
+            self.frame = self.rawCapture.array
+            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)
+            img = Image.fromarray(cv2image)
             #img.thumbnail((464, 464), Image.ANTIALIAS)
             imgtk = ImageTk.PhotoImage(image=img)
             self.lmain.imgtk = imgtk
@@ -117,8 +107,6 @@ class Camera:
     def get_picture(self):
         #self.cap.release()
         #cv2.destroyAllWindows()
-        if rpi:
-            self.frame = cv2.cvtColor(self.image, cv2.RGBA2BGR)
         return self.frame
 
     def show(self):
