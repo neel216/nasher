@@ -90,8 +90,6 @@ class Camera:
         '''
         if rpi:
             self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
-            print('Captured %dx%d image' % (
-                self.rawCapture.array.shape[1], self.rawCapture.array.shape[0]))
 
             image = self.rawCapture.array
             cv2image = cv2.cvtColor(image, cv2.COLOR_BGR2RGBA)
@@ -101,27 +99,8 @@ class Camera:
             self.lmain.imgtk = imgtk
             self.lmain.configure(image=imgtk)
 
-
-
             self.rawCapture.truncate(0)
 
-
-
-
-            '''
-            #self.frame = image.array
-            cv2.imshow('frame', image.array)
-            cv2.waitKey(0)
-
-            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)  # convert colors from BGR to RGBA
-            img = Image.fromarray(cv2image)  # convert image for PIL
-            img.thumbnail((464, 464), Image.ANTIALIAS)
-            imgtk = ImageTk.PhotoImage(image=img)  # convert image for tkinter
-            self.lmain.imgtk = imgtk  # anchor imgtk so it does not be deleted by garbage-collector
-            self.lmain.configure(image=imgtk)  # show the image
-
-            self.rawCapture.truncate(0)
-            '''
             self.lmain.after(10, self.video_stream)
         else:
             ok, self.frame = self.cap.read()  # read frame from video stream
