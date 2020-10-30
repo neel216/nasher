@@ -54,13 +54,10 @@ class Camera:
             print('[INFO] Loading Raspberry Pi Camera')
             self.camera_ = PiCamera()
             print('[INFO] Raspberry Pi Camera Initialized')
+            self.rawCapture = PiRGBArray(self.camera_)
+            print('[INFO] Raspberry Pi Camera Raw Capture set')
             self.camera_.resolution = (464, 464)
             print('[INFO] Raspberry Pi Camera Resolution set')
-            self.camera_.framerate = 32
-            print('[INFO] Raspberry Pi Camera FPS set')
-            self.rawCapture = PiRGBArray(self.camera_, size=self.camera_.resolution)
-            print('[INFO] Raspberry Pi Camera Raw Capture set')
-            time.sleep(0.1)
 
         else:
             print('[INFO] Loaded camera')
@@ -92,7 +89,15 @@ class Camera:
             self.rawCapture.truncate(0)
         '''
         if rpi:
-            image = self.camera_.capture(self.rawCapture, format="bgr", use_video_port=True)
+            self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
+            print('Captured %dx%d image' % (
+                self.rawCapture.array.shape[1], self.rawCapture.array.shape[0]))
+            self.rawCapture.truncate(0)
+
+
+
+
+            '''
             #self.frame = image.array
             cv2.imshow('frame', image.array)
             cv2.waitKey(0)
@@ -105,6 +110,7 @@ class Camera:
             self.lmain.configure(image=imgtk)  # show the image
 
             self.rawCapture.truncate(0)
+            '''
             self.lmain.after(10, self.video_stream)
         else:
             ok, self.frame = self.cap.read()  # read frame from video stream
