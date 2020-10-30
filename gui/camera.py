@@ -6,7 +6,7 @@ try:
     from picamera.array import PiRGBArray
     from picamera import PiCamera
     import time
-    rpi = True
+    rpi = False
 except ImportError:
     print('Not on Raspberry Pi')
     rpi = False
