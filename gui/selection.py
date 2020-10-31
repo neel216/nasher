@@ -20,7 +20,7 @@ class Selection:
         title = ttk.Label(self.selection, text='Select the correct painting')
         title.grid(row=1, column=0, columnspan=2)
 
-        self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.015*width)))
+        self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
         self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
         self.options.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.options.yview)
