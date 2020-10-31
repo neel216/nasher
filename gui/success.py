@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import tkinter.font as tkFont
 
 
 class Success:
@@ -13,10 +12,10 @@ class Success:
         self.menu = menu
 
 
-        title = tk.Label(self.success, text='Success', font=tkFont.Font(size=30))
+        title = ttk.Label(self.success, text='Success')
         title.grid(row=0, column=0)
 
-        message = tk.Label(self.success, text='Data sent to registrar.')
+        message = ttk.Label(self.success, text='Data sent to registrar.')
         message.grid(row=1, column=0)
 
         restart = ttk.Button(self.success, text='Restart', command=self.hide)

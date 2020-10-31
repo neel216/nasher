@@ -15,11 +15,11 @@ class Entry:
         restart = ttk.Button(self.entry, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = tk.Label(self.entry, text='Enter the correct object number', font=tkFont.Font(size=30))
+        title = ttk.Label(self.entry, text='Enter the correct object number')
         title.grid(row=1, column=0, columnspan=3)
 
         self.object_id = tk.StringVar()
-        self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id)
+        self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=50))
         self.entryBox.grid(row=2, column=0, columnspan=3)
 
         self.entryKeyboard()

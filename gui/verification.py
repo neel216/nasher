@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import tkinter.font as tkFont
 
 
 class Verification:
@@ -18,13 +17,13 @@ class Verification:
         restart.grid(row=0, column=0, columnspan=2, sticky='w')
 
         
-        title = tk.Label(self.verification, text='Verify OCR Value', font=tkFont.Font(size=30))
+        title = ttk.Label(self.verification, text='Verify OCR Value')
         title.grid(row=1, column=0, columnspan=2)
 
-        prompt = tk.Label(self.verification, text='Is the object number correct?')
+        prompt = ttk.Label(self.verification, text='Is the object number correct?')
         prompt.grid(row=2, column=0, columnspan=2)
 
-        number = tk.Label(self.verification, text=objectID)
+        number = ttk.Label(self.verification, text=objectID, style='TLabel')
         number.grid(row=3, column=0, columnspan=2)
 
         wrong = ttk.Button(self.verification, text='No', command=self.entryPage.show)

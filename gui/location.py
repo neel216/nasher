@@ -20,11 +20,11 @@ class Location:
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = tk.Label(self.location, text='Enter the new rack', font=tkFont.Font(size=30))
+        title = ttk.Label(self.location, text='Enter the new rack')
         title.grid(row=1, column=0, columnspan=3)
         
         self.rack = tk.StringVar()
-        self.entry = ttk.Entry(self.location, textvariable=self.rack)
+        self.entry = ttk.Entry(self.location, textvariable=self.rack, font=tkFont.Font(size=50))
         self.entry.grid(row=2, column=0, columnspan=3)
 
         self.selectionKeyboard()

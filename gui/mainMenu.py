@@ -46,6 +46,11 @@ class MainMenu:
         print('[INFO] Loaded main menu')
 
     def show(self):
+        s = ttk.Style()
+        s.configure('TButton', font=('arial', 50), padding=30)
+        s.configure('TLabel', font=('arial', 50), background='white')
+        s.configure('TEntry', font=('arial', 50), background='white')
+
         button1 = ttk.Button(self.mainMenu, text='Change a Painting\'s Location', command=self.camera.show)
         button2 = ttk.Button(self.mainMenu, text='Lookup a Painting')
         button3 = ttk.Button(self.mainMenu, text='Lookup a Rack')

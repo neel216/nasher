@@ -17,15 +17,19 @@ class Selection:
         restart = ttk.Button(self.selection, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = tk.Label(self.selection, text='Select the correct painting', font=tkFont.Font(size=30))
+        title = ttk.Label(self.selection, text='Select the correct painting')
         title.grid(row=1, column=0)
 
-        self.options = tk.Listbox(self.selection, width=70, height=15)
+        self.options = tk.Listbox(self.selection, width=130, height=30, font=tkFont.Font(size=30))
 
         c = 1
         self.paintings = self.lookup.get_info(objectID)
         for i in self.paintings:
-            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {' x '.join(str(d) for d in i['dimensions'])}"
+            if type(i['dimensions']) == type(' '):
+                dims = i['dimensions']
+            else:
+                dims = ' x '.join(str(d) for d in i['dimensions'])
+            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {dims}"
             self.options.insert(c, output)
             c += 1
 
