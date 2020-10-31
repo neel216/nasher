@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 
 
 class Selection:
-    def __init__(self, parent, menu, mainMenu, location, objectID, lookup):
+    def __init__(self, parent, menu, mainMenu, location, objectID, lookup, width):
         self.lookup = lookup
         self.selection = tk.Frame(master=parent)
         self.selection.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
@@ -20,7 +20,7 @@ class Selection:
         title = ttk.Label(self.selection, text='Select the correct painting')
         title.grid(row=1, column=0)
 
-        self.options = tk.Listbox(self.selection, width=130, height=30, font=tkFont.Font(size=30))
+        self.options = tk.Listbox(self.selection, width=int(0.039 * width), height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
 
         c = 1
         self.paintings = self.lookup.get_info(objectID)
@@ -29,7 +29,7 @@ class Selection:
                 dims = i['dimensions']
             else:
                 dims = ' x '.join(str(d) for d in i['dimensions'])
-            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {dims}"
+            output = f"{i['objectID']}   in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {dims}"
             self.options.insert(c, output)
             c += 1
 

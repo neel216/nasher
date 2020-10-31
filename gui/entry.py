@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 
 
 class Entry:
-    def __init__(self, parent, menu, mainMenu):
+    def __init__(self, parent, menu, mainMenu, width):
         self.entry = tk.Frame(master=parent)
         self.entry.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -19,7 +19,7 @@ class Entry:
         title.grid(row=1, column=0, columnspan=3)
 
         self.object_id = tk.StringVar()
-        self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=50))
+        self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=int(0.024 * width)))
         self.entryBox.grid(row=2, column=0, columnspan=3)
 
         self.entryKeyboard()

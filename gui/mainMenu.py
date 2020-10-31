@@ -8,7 +8,7 @@ from sheets import Sheet
 
 
 class MainMenu:
-    def __init__(self, parent):
+    def __init__(self, parent, width, height):
         '''
         Creates and shows the main menu of the GUI
 
@@ -21,6 +21,8 @@ class MainMenu:
         self.lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
         self.model = load_model('data/handwriting.model')
         self.sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
+        self.width = width
+        self.height = height
         print('[INFO] Loaded model')
 
         self.parent = parent
@@ -31,11 +33,11 @@ class MainMenu:
 
         self.success = success.Success(self.parent, self.mainMenu, self)
         print('[INFO] Loaded success screen')
-        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet)
+        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet, self.width)
         print('[INFO] Loaded location screen')
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID, self.lookup)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID, self.lookup, self.width)
         print('[INFO] Loaded selection screen')
-        self.entry = entry.Entry(self.parent, self.mainMenu, self)
+        self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width)
         print('[INFO] Loaded entry screen')
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         print('[INFO] Loaded verification screen')
@@ -47,9 +49,11 @@ class MainMenu:
 
     def show(self):
         s = ttk.Style()
-        s.configure('TButton', font=('arial', 50), padding=30)
-        s.configure('TLabel', font=('arial', 50), background='white')
-        s.configure('TEntry', font=('arial', 50), background='white')
+        fontSize = int(0.024 * self.width)
+        padding = int(0.015*self.width)
+        s.configure('TButton', font=('arial', fontSize), padding=padding)
+        s.configure('TLabel', font=('arial', fontSize))
+        s.configure('TEntry', font=('arial', fontSize))
 
         button1 = ttk.Button(self.mainMenu, text='Change a Painting\'s Location', command=self.camera.show)
         button2 = ttk.Button(self.mainMenu, text='Lookup a Painting')
@@ -73,17 +77,17 @@ class MainMenu:
         process_ocr(self.model, self.image)
         self.objectID = '2016.19.1' # process image and get this from OCR
 
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup, self.width)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
     
     def correct_objectID(self, objectID):
         self.objectID = objectID
 
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup)
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.success, self.objectID, self.lookup, self.width)
         self.selection.show()
 
     def select(self, selectedObjectID):
         self.selectedObjectID = selectedObjectID
-        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet)
+        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet, self.width)
         self.location.show()

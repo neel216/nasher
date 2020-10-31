@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 
 
 class Location:
-    def __init__(self, parent, menu, mainMenu, success, painting, lookup, sheet):
+    def __init__(self, parent, menu, mainMenu, success, painting, lookup, sheet, width):
         self.location = tk.Frame(master=parent)
         self.location.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -24,7 +24,7 @@ class Location:
         title.grid(row=1, column=0, columnspan=3)
         
         self.rack = tk.StringVar()
-        self.entry = ttk.Entry(self.location, textvariable=self.rack, font=tkFont.Font(size=50))
+        self.entry = ttk.Entry(self.location, textvariable=self.rack, font=tkFont.Font(size=int(0.024 * width)))
         self.entry.grid(row=2, column=0, columnspan=3)
 
         self.selectionKeyboard()

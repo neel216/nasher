@@ -13,6 +13,6 @@ root = tk.Frame(master=window)
 root.pack_propagate(0) # Don't allow the widgets inside to determine the frame's width / height
 root.pack(fill=tk.BOTH, expand=1) # Expand the frame to fill the root window
 
-gui = mainMenu.MainMenu(root)
+gui = mainMenu.MainMenu(root, width, height)
 
 window.mainloop()
