@@ -20,7 +20,10 @@ class Selection:
         title = ttk.Label(self.selection, text='Select the correct painting')
         title.grid(row=1, column=0)
 
-        self.options = tk.Listbox(self.selection, width=int(0.039 * width), height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
+        self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
+        self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
+        self.options.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.options.yview)
 
         c = 1
         self.paintings = self.lookup.get_info(objectID)
@@ -33,7 +36,8 @@ class Selection:
             self.options.insert(c, output)
             c += 1
 
-        self.options.grid(row=2, column=0)
+        self.options.grid(row=2, column=0, sticky='ew')
+        self.scrollbar.grid(row=2, column=1, sticky='ns')
 
         select = ttk.Button(self.selection, text='Select', command=self.select)
         select.grid(row=3, column=0)
@@ -41,6 +45,19 @@ class Selection:
         self.selection.grid_columnconfigure(0, weight=1)
         self.selection.grid_rowconfigure([1, 3], weight=1)
     
+    # callback bound to mouse-move event
+    def mouse_move_callback(self, event):
+        # use event.y with a previous remembered y value to determine
+        # directions
+        directions = 1 # just as an example, could also be -1
+
+        # scroll the listbox vertically. 
+        # to increase scrolling speed, either multiply counter by some value >1
+        # or replace 'units' which means scroll 1 character in the current setting 
+        # by 'pages' for larger steps. 'pages' should scroll the visible 
+        # area of the listbox further.
+        self.options.yview_scroll(directions, 'units')
+
     def select(self):
         selectedLine = self.options.curselection()[0]
         selectedID = self.paintings[selectedLine]
