@@ -18,7 +18,7 @@ class Selection:
         restart.grid(row=0, column=0, sticky='w')
 
         title = ttk.Label(self.selection, text='Select the correct painting')
-        title.grid(row=1, column=0)
+        title.grid(row=1, column=0, columnspan=2)
 
         self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
         self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
@@ -32,15 +32,20 @@ class Selection:
                 dims = i['dimensions']
             else:
                 dims = ' x '.join(str(d) for d in i['dimensions'])
-            output = f"{i['objectID']}   in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {dims}"
+            output = f"{i['objectID']} in {i['room']} on {i['locationType']} {i['location']}. Dimensions (cm): {dims}"
             self.options.insert(c, output)
             c += 1
 
-        self.options.grid(row=2, column=0, sticky='ew')
-        self.scrollbar.grid(row=2, column=1, sticky='ns')
+        self.options.grid(row=2, column=0, columnspan=2, sticky='ew')
+        self.scrollbar.grid(row=2, column=1, sticky='nse')
+
+        up = ttk.Button(self.selection, text='Scroll up', command=lambda: self.options.yview_scroll(-1, tk.PAGES))
+        up.grid(row=1, column=1, sticky='se')
+        down = ttk.Button(self.selection, text='Scroll down', command=lambda: self.options.yview_scroll(1, tk.PAGES))
+        down.grid(row=3, column=1, sticky='ne')
 
         select = ttk.Button(self.selection, text='Select', command=self.select)
-        select.grid(row=3, column=0)
+        select.grid(row=3, column=0, columnspan=2)
 
         self.selection.grid_columnconfigure(0, weight=1)
         self.selection.grid_rowconfigure([1, 3], weight=1)

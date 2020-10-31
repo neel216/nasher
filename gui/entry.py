@@ -25,7 +25,7 @@ class Entry:
         self.entryKeyboard()
 
         ok = ttk.Button(self.entry, text='Ok', command=self.correct_object_id)
-        ok.grid(row=7, column=0, columnspan=3)
+        ok.grid(row=7, column=2, columnspan=3)
 
         self.entry.grid_columnconfigure([0, 1, 2], weight=1)
         self.entry.grid_rowconfigure([1, 2, 7], weight=1)

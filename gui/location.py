@@ -30,7 +30,7 @@ class Location:
         self.selectionKeyboard()
 
         ok = ttk.Button(self.location, text='Ok', command=self.submitRack)
-        ok.grid(row=8, column=0, columnspan=3)
+        ok.grid(row=8, column=2, columnspan=3)
 
 
         self.location.grid_columnconfigure([0, 1, 2], weight=1)
