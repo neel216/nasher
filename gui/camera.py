@@ -90,7 +90,7 @@ class Camera:
 
             self.rawCapture.truncate(0)
 
-            self.lmain.after(33, self.video_stream)
+            self.lmain.after(35, self.video_stream)
         else:
             ok, self.frame = self.cap.read()  # read frame from video stream
             if ok:  # frame captured without any errors
