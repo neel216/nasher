@@ -78,6 +78,18 @@ class Camera:
 
     def video_stream(self):
         if rpi:
+            for image in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
+                self.frame = image.array
+
+                cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)
+                img = Image.fromarray(cv2image)
+                #img.thumbnail((464, 464), Image.ANTIALIAS)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.lmain.imgtk = imgtk
+                self.lmain.configure(image=imgtk)
+
+                self.rawCapture.truncate(0)
+            '''
             self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
 
             self.frame = self.rawCapture.array
@@ -91,6 +103,7 @@ class Camera:
             self.rawCapture.truncate(0)
 
             self.lmain.after(10, self.video_stream)
+            '''
         else:
             ok, self.frame = self.cap.read()  # read frame from video stream
             if ok:  # frame captured without any errors
