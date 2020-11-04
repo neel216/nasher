@@ -1,5 +1,7 @@
 from lookup import Lookup
 from sheets import Sheet
+import camera_integrate1
+from os import execv
 
 
 def change_location():
@@ -61,6 +63,14 @@ def lookup_rack():
         print(str(c) + '.', lookup.to_string(i), '\n')
         c += 1
 
+def scan_rack():
+    # execv("camera_transform.py", [])
+    # camera_transform.run()
+    camera_integrate1.run()
+    #print("test")
+    # fork("camera_transform.py")
+    # print("test")
+
 def add_painting():
     objectID = input('What is the object number of the new painting? ')
     room = input('What room will the painting be stored in? ')
@@ -92,7 +102,7 @@ elif choice == 'b':
 elif choice == 'c':
     lookup_rack()
 elif choice == 'd':
-    pass # image recognition stuff would get called here
+    scan_rack()
 elif choice == 'e':
     add_painting()
 

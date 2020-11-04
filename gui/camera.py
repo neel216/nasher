@@ -86,7 +86,7 @@ class Camera:
                     break
             cv2.waitKey(1)
             cv2.destroyAllWindows()
-            for i in range (1,5):
+            for i in range (1, 5):
                 cv2.waitKey(1)
             self.mainMenu.capture_image()
             return
