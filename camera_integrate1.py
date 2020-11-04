@@ -67,8 +67,9 @@ def onMouse(event, x, y, flags, param):
 camera = PiCamera()
 camera_init(camera, (640, 480))
 rawCapture = PiRGBArray(camera, size=camera.resolution)
-window_title = "Video Feed"
+window_title = "Camera"
 cv2.namedWindow(window_title)
+cv2.setWindowProperty(window_title, cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
 cv2.setMouseCallback(window_title, onMouse)
 
 def run():
