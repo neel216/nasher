@@ -9,7 +9,7 @@ try:
     import os
     import time
     os.system("sudo modprobe bcm2835-v4l2")
-    rpi = True
+    rpi = False
 except ImportError:
     print('Not on Raspberry Pi')
     rpi = False
@@ -61,6 +61,8 @@ class Camera:
             self.camera_.framerate = 32
 
         else:
+            pass
+            '''
             print('[INFO] Loaded camera')
             self.cap = cv2.VideoCapture(0)
             print('[INFO] Setting camera resolution')
@@ -69,12 +71,17 @@ class Camera:
 
         takePicture = ttk.Button(self.camera, text='Take Picture', command=self.mainMenu.capture_image)
         takePicture.grid(row=2, column=0)
+        '''
+        takePicture = ttk.Button(self.camera, text='Open Camera', command=self.video_stream)
+        takePicture.grid(row=2, column=0)
 
         self.camera.grid_columnconfigure(0, weight=1)
         self.camera.grid_rowconfigure(2, weight=1)
 
+        '''
         print('[INFO] Raspberry Pi Camera Camera loaded. Starting video stream...')
         self.video_stream()
+        '''
 
     def video_stream(self):
         if rpi:
@@ -92,6 +99,7 @@ class Camera:
 
             self.lmain.after(35, self.video_stream)
         else:
+            '''
             ok, self.frame = self.cap.read()  # read frame from video stream
             if ok:  # frame captured without any errors
                 #self.frame = cv2.flip(frame, 1)
@@ -103,10 +111,33 @@ class Camera:
                 self.lmain.configure(image=imgtk)  # show the image
 
             self.lmain.after(10, self.video_stream)
+            '''
+            print('[INFO] Loaded camera')
+            self.cap = cv2.VideoCapture(0)
+            print('[INFO] Setting camera resolution')
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 464)
+
+            while True:
+                ok, self.frame = self.cap.read()  # read frame from video stream
+                cv2.namedWindow("Camera", cv2.WND_PROP_FULLSCREEN)
+                cv2.setWindowProperty("Camera",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+                cv2.imshow("Camera", self.frame)
+                
+                
+                k = cv2.waitKey(1)
+                if k % 256 == 32:
+                    # SPACE pressed
+                    print('Picture taken!')
+                    break
+            cv2.waitKey(1)
+            cv2.destroyAllWindows()
+            for i in range (1,5):
+                cv2.waitKey(1)
+            self.mainMenu.capture_image()
+            return
 
     def get_picture(self):
-        #self.cap.release()
-        #cv2.destroyAllWindows()
         return self.frame
 
     def show(self):

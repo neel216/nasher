@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import cv2
 
 
 class Verification:
@@ -37,6 +38,7 @@ class Verification:
 
     def show(self):
         self.verification.lift()
+        cv2.destroyAllWindows()
 
     def hide(self):
         self.menu.lift()
