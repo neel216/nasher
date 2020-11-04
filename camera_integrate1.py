@@ -69,7 +69,7 @@ camera_init(camera, (640, 480))
 rawCapture = PiRGBArray(camera, size=camera.resolution)
 window_title = "Camera"
 cv2.namedWindow(window_title)
-cv2.setWindowProperty(window_title, cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+cv2.setWindowProperty(window_title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 cv2.setMouseCallback(window_title, onMouse)
 
 def run():
@@ -77,7 +77,8 @@ def run():
 
     for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
         if(tran_stage == 0):
-            image = frame.array
+            rot = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+            image = rot.array
 
         if freeze_frame:  # if true, wait for keypress to advance to next frame.
             cv2.waitKey(0)
