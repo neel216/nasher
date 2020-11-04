@@ -9,7 +9,7 @@ try:
     import os
     import time
     os.system("sudo modprobe bcm2835-v4l2")
-    rpi = False
+    rpi = True
 except ImportError:
     print('Not on Raspberry Pi')
     rpi = False
@@ -51,14 +51,7 @@ class Camera:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 464)
             '''
-            print('[INFO] Loading Raspberry Pi Camera')
-            self.camera_ = PiCamera()
-            print('[INFO] Raspberry Pi Camera Initialized')
-            self.rawCapture = PiRGBArray(self.camera_)
-            print('[INFO] Raspberry Pi Camera Raw Capture set')
-            self.camera_.resolution = (464, 464)
-            print('[INFO] Raspberry Pi Camera Resolution set')
-            self.camera_.framerate = 32
+            pass
 
         else:
             pass
@@ -78,26 +71,35 @@ class Camera:
         self.camera.grid_columnconfigure(0, weight=1)
         self.camera.grid_rowconfigure(2, weight=1)
 
-        '''
-        print('[INFO] Raspberry Pi Camera Camera loaded. Starting video stream...')
-        self.video_stream()
-        '''
-
     def video_stream(self):
         if rpi:
-            self.camera_.capture(self.rawCapture, 'bgr', resize=(464, 464))
+            print('[INFO] Loading Raspberry Pi Camera')
+            camera_ = PiCamera()
+            print('[INFO] Raspberry Pi Camera Initialized')
+            rawCapture = PiRGBArray(camera_)
+            print('[INFO] Raspberry Pi Camera Raw Capture set')
+            camera_.resolution = (464, 464)
+            print('[INFO] Raspberry Pi Camera Resolution set')
+            camera_.framerate = 32
+            for image in camera_.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+                self.frame = image.array
+                cv2.namedWindow("Camera", cv2.WND_PROP_FULLSCREEN)
+                cv2.setWindowProperty("Camera",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+                cv2.imshow("Camera", self.frame)
 
-            self.frame = self.rawCapture.array
-            cv2image = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGBA)
-            img = Image.fromarray(cv2image)
-            #img.thumbnail((464, 464), Image.ANTIALIAS)
-            imgtk = ImageTk.PhotoImage(image=img)
-            self.lmain.imgtk = imgtk
-            self.lmain.configure(image=imgtk)
+                rawCapture.truncate(0)
 
-            self.rawCapture.truncate(0)
-
-            self.lmain.after(35, self.video_stream)
+                k = cv2.waitKey(1)
+                if k % 256 == 32:
+                    # SPACE pressed
+                    print('Picture taken!')
+                    break
+            cv2.waitKey(1)
+            cv2.destroyAllWindows()
+            for i in range (1,5):
+                cv2.waitKey(1)
+            self.mainMenu.capture_image()
+            return
         else:
             '''
             ok, self.frame = self.cap.read()  # read frame from video stream
