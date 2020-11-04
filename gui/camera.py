@@ -32,17 +32,15 @@ class Camera:
         self.lmain.grid(row=1, column=0)
 
         if rpi:
-            '''
             print('[INFO] Loading Raspberry Pi Camera')
             self.camera_ = PiCamera()
             print('[INFO] Raspberry Pi Camera Initialized')
-            self.camera_.resolution = (464, 464)
+            #self.camera_.resolution = (464, 464)
             print('[INFO] Raspberry Pi Camera Resolution set')
             self.camera_.framerate = 32
             print('[INFO] Raspberry Pi Camera FPS set')
-            self.rawCapture = PiRGBArray(self.camera_, size=self.camera_.resolution)
+            self.rawCapture = PiRGBArray(self.camera_)
             print('[INFO] Raspberry Pi Camera Raw Capture set')
-            '''
 
             '''
             print('[INFO] Loaded camera')
@@ -51,7 +49,6 @@ class Camera:
             self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 464)
             self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 464)
             '''
-            pass
 
         else:
             pass
@@ -73,21 +70,14 @@ class Camera:
 
     def video_stream(self):
         if rpi:
-            print('[INFO] Loading Raspberry Pi Camera')
-            camera_ = PiCamera()
-            print('[INFO] Raspberry Pi Camera Initialized')
-            rawCapture = PiRGBArray(camera_)
-            print('[INFO] Raspberry Pi Camera Raw Capture set')
-            camera_.resolution = (464, 464)
-            print('[INFO] Raspberry Pi Camera Resolution set')
-            camera_.framerate = 32
-            for image in camera_.capture_continuous(rawCapture, format='bgr', use_video_port=True):
-                self.frame = image.array
+            for image in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
+                img = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+                self.frame = img.array
                 cv2.namedWindow("Camera", cv2.WND_PROP_FULLSCREEN)
-                cv2.setWindowProperty("Camera",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
+                cv2.setWindowProperty("Camera", cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
                 cv2.imshow("Camera", self.frame)
 
-                rawCapture.truncate(0)
+                self.rawCapture.truncate(0)
 
                 k = cv2.waitKey(1)
                 if k % 256 == 32:
