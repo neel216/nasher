@@ -71,8 +71,8 @@ class Camera:
     def video_stream(self):
         if rpi:
             for image in self.camera_.capture_continuous(self.rawCapture, format='bgr', use_video_port=True):
-                img = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
-                self.frame = img.array
+                img = image.array
+                self.frame = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
                 cv2.namedWindow("Camera", cv2.WND_PROP_FULLSCREEN)
                 cv2.setWindowProperty("Camera", cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN)
                 cv2.imshow("Camera", self.frame)
