@@ -38,8 +38,17 @@ class Location:
         self.location.grid_rowconfigure([3, 4, 5, 6, 7], weight=1)
 
     def appendChar(self, char):
-        i = len(self.rack.get())
-        self.entry.insert(i, char)
+        if len(self.rack.get()) == 0 and char in 'AB':
+            pass
+        elif len(self.rack.get()) == 2 and self.rack.get()[-1] in 'AB':
+            pass
+        elif len(self.rack.get()) == 2 and self.rack.get()[-1] not in 'AB' and char not in 'AB':
+            pass
+        elif len(self.rack.get()) == 3:
+            pass
+        else:
+            i = len(self.rack.get())
+            self.entry.insert(i, char)
     
     def deleteChar(self):
         i = len(self.rack.get()) - 1

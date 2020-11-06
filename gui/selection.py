@@ -26,15 +26,21 @@ class Selection:
         self.scrollbar.config(command=self.options.yview)
 
         c = 1
-        self.paintings = self.lookup.get_info(objectID)
-        for i in self.paintings:
-            if type(i['dimensions']) == type(' '):
-                dims = i['dimensions']
-            else:
-                dims = ' x '.join(str(d) for d in i['dimensions'])
-            output = f"{i['objectID']} in {i['room']} on {i['location']}. Dimensions (cm): {dims}"
-            self.options.insert(c, output)
-            c += 1
+        if self.lookup.object_exists(objectID):
+            self.paintings = self.lookup.get_info(objectID)
+            for i in self.paintings:
+                if type(i['dimensions']) == type(' '):
+                    dims = i['dimensions']
+                else:
+                    dims = ' x '.join(str(d) for d in i['dimensions'])
+                output = f"{i['objectID']} in {i['room']} on {i['location']}. Dimensions (cm): {dims}"
+                self.options.insert(c, output)
+                c += 1
+
+            select = ttk.Button(self.selection, text='Select', command=self.select)
+            select.grid(row=3, column=0, columnspan=2)
+        else:
+            self.options.insert(c, f'Found no results for object number {objectID}')
 
         self.options.grid(row=2, column=0, columnspan=2, sticky='ew')
         self.scrollbar.grid(row=2, column=1, sticky='nse')
@@ -43,9 +49,6 @@ class Selection:
         up.grid(row=1, column=1, sticky='se')
         down = ttk.Button(self.selection, text='Scroll down', command=lambda: self.options.yview_scroll(1, tk.PAGES))
         down.grid(row=3, column=1, sticky='ne')
-
-        select = ttk.Button(self.selection, text='Select', command=self.select)
-        select.grid(row=3, column=0, columnspan=2)
 
         self.selection.grid_columnconfigure(0, weight=1)
         self.selection.grid_rowconfigure([1, 3], weight=1)
