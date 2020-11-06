@@ -9,10 +9,10 @@ class Selection:
         self.selection = tk.Frame(master=parent)
         self.selection.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.selection.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
         self.location = location
+        self.parent = parent
 
         restart = ttk.Button(self.selection, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
@@ -59,7 +59,9 @@ class Selection:
         self.mainMenu.select(selectedID)
 
     def show(self):
+        self.selection.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.selection.lift()
 
     def hide(self):
+        self.selection.pack_forget()
         self.menu.lift()

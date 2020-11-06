@@ -31,18 +31,6 @@ class MainMenu:
         self.mainMenu.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
         print('[INFO] Started GUI')
 
-        self.success = success.Success(self.parent, self.mainMenu, self)
-        print('[INFO] Loaded success screen')
-        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet, self.width)
-        print('[INFO] Loaded location screen')
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID, self.lookup, self.width)
-        print('[INFO] Loaded selection screen')
-        self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width)
-        print('[INFO] Loaded entry screen')
-        self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
-        print('[INFO] Loaded verification screen')
-        self.camera = camera.Camera(self.parent, self.mainMenu, self, self.verification)
-        print('[INFO] Loaded camera screen')
 
         self.show()
         print('[INFO] Loaded main menu')
@@ -55,11 +43,11 @@ class MainMenu:
         s.configure('TLabel', font=('arial', fontSize))
         s.configure('TEntry', font=('arial', fontSize))
 
-        button1 = ttk.Button(self.mainMenu, text='Change a Painting\'s Location', command=self.camera.show)
-        button2 = ttk.Button(self.mainMenu, text='Lookup a Painting')
-        button3 = ttk.Button(self.mainMenu, text='Lookup a Rack')
-        button4 = ttk.Button(self.mainMenu, text='Scan a Rack')
-        button5 = ttk.Button(self.mainMenu, text='Add a Painting')
+        button1 = ttk.Button(self.mainMenu, text='Change a Painting\'s Location', command=self.change_painting)
+        button2 = ttk.Button(self.mainMenu, text='Lookup a Painting', command=self.lookup_painting)
+        button3 = ttk.Button(self.mainMenu, text='Lookup a Rack', command=self.lookup_rack)
+        button4 = ttk.Button(self.mainMenu, text='Scan a Rack', command=self.scan_rack)
+        button5 = ttk.Button(self.mainMenu, text='Add a Painting', command=self.add_painting)
 
         button1.grid(row=0, column=0)
         button2.grid(row=1, column=0)
@@ -71,6 +59,34 @@ class MainMenu:
         self.mainMenu.grid_rowconfigure([0, 1, 2, 3, 4], weight=1)
 
         self.mainMenu.lift()
+
+    def change_painting(self):
+        self.success = success.Success(self.parent, self.mainMenu, self)
+        print('[INFO] Loaded success screen')
+        self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet, self.width)
+        print('[INFO] Loaded location screen')
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.location, self.objectID, self.lookup, self.width)
+        print('[INFO] Loaded selection screen')
+        self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width)
+        print('[INFO] Loaded entry screen')
+        self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
+        print('[INFO] Loaded verification screen')
+        self.camera = camera.Camera(self.parent, self.mainMenu, self, self.verification)
+        print('[INFO] Loaded camera screen')
+    
+        self.camera.show()
+    
+    def lookup_painting(self):
+        pass
+
+    def lookup_rack(self):
+        pass
+
+    def scan_rack(self):
+        pass
+
+    def add_painting(self):
+        pass
 
     def capture_image(self):
         self.image = self.camera.get_picture()

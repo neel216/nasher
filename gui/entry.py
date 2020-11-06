@@ -8,9 +8,9 @@ class Entry:
         self.entry = tk.Frame(master=parent)
         self.entry.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.entry.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
+        self.parent = parent
 
         restart = ttk.Button(self.entry, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
@@ -71,7 +71,9 @@ class Entry:
         self.object_id.set('')
     
     def show(self):
+        self.entry.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.entry.lift()
 
     def hide(self):
+        self.entry.place_forget()
         self.menu.lift()

@@ -8,13 +8,13 @@ class Location:
         self.location = tk.Frame(master=parent)
         self.location.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.location.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
         self.success = success
         self.painting = painting
         self.lookup = lookup
         self.sheet = sheet
+        self.parent = parent
         
 
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
@@ -94,7 +94,9 @@ class Location:
         self.success.show()
 
     def show(self):
+        self.location.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.location.lift()
 
     def hide(self):
+        self.location.place_forget()
         self.menu.lift()

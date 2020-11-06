@@ -7,9 +7,9 @@ class Success:
         self.success = tk.Frame(master=parent)
         self.success.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.success.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
+        self.parent = parent
 
 
         title = ttk.Label(self.success, text='Success')
@@ -24,10 +24,10 @@ class Success:
         self.success.grid_columnconfigure(0, weight=1)
         self.success.grid_rowconfigure([0, 1, 2], weight=1)
 
-
-
     def show(self):
+        self.success.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.success.lift()
 
     def hide(self):
+        self.success.pack_forget()
         self.menu.lift()
