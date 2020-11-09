@@ -1,4 +1,4 @@
-from gui import camera, verification, entry, selection, location, success
+from gui import camera, verification, entry, selection, location, success, comingSoon
 import tkinter as tk
 from tkinter import ttk
 from tensorflow.keras.models import load_model
@@ -106,15 +106,21 @@ class MainMenu:
     def lookup_painting(self):
         self.refresh_screens()
         self.screen = 'lookup_painting'
+
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location='1A', objectID='2016.1.1')
+        self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width, selection=self.selection)
+
+        self.entry.show()
     
     def delete_lookup_painting(self):
-        pass
+        self.entry.destroy()
+        self.selection.destroy()
 
     def lookup_rack(self):
         self.refresh_screens()
         self.screen = 'lookup_rack'
 
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, objectID='2016.1.1')
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location='1A', objectID='2016.1.1')
         self.location = location.Location(self.parent, self.mainMenu, self,
                                           lookup=self.lookup,
                                           width=self.width,
@@ -130,15 +136,23 @@ class MainMenu:
         self.refresh_screens()
         self.screen = 'scan_rack'
 
+        self.soon = comingSoon.ComingSoon(self.parent, self.mainMenu, self)
+        
+        self.soon.show()
+
     def delete_scan_rack(self):
-        pass
+        self.soon.destroy()
 
     def add_painting(self):
         self.refresh_screens()
         self.screen = 'add_painting'
 
+        self.soon = comingSoon.ComingSoon(self.parent, self.mainMenu, self)
+        
+        self.soon.show()
+
     def delete_add_painting(self):
-        pass
+        self.soon.destroy()
 
     def capture_image(self):
         self.image = self.camera.get_picture()
@@ -163,4 +177,9 @@ class MainMenu:
     def searchRackNumber(self, rackInfo):
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, rackPaintings=rackInfo)
         self.location.hide()
+        self.selection.show()
+    
+    def searchObjectNumber(self, objectID):
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, objectID=objectID)
+        self.entry.hide()
         self.selection.show()

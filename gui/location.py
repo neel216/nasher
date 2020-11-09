@@ -20,7 +20,10 @@ class Location:
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = ttk.Label(self.location, text='Enter the new rack')
+        if success:
+            title = ttk.Label(self.location, text='Enter the new rack')
+        else:
+            title = ttk.Label(self.location, text='Enter the rack')
         title.grid(row=1, column=0, columnspan=3)
         
         self.rack = tk.StringVar()

@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 
 
 class Entry:
-    def __init__(self, parent, menu, mainMenu, width):
+    def __init__(self, parent, menu, mainMenu, width, selection=None):
         self.entry = tk.Frame(master=parent)
         self.entry.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -15,17 +15,30 @@ class Entry:
         restart = ttk.Button(self.entry, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = ttk.Label(self.entry, text='Enter the correct object number')
-        title.grid(row=1, column=0, columnspan=3)
+        if not selection:
+            title = ttk.Label(self.entry, text='Enter the correct object number')
+            title.grid(row=1, column=0, columnspan=3)
 
-        self.object_id = tk.StringVar()
-        self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=int(0.024 * width)))
-        self.entryBox.grid(row=2, column=0, columnspan=3)
+            self.object_id = tk.StringVar()
+            self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=int(0.024 * width)))
+            self.entryBox.grid(row=2, column=0, columnspan=3)
 
-        self.entryKeyboard()
+            self.entryKeyboard()
 
-        ok = ttk.Button(self.entry, text='Ok', command=self.correct_object_id)
-        ok.grid(row=7, column=2, columnspan=3)
+            ok = ttk.Button(self.entry, text='Ok', command=self.correct_object_id)
+            ok.grid(row=7, column=2, columnspan=3)
+        else:
+            title = ttk.Label(self.entry, text='Enter the object number')
+            title.grid(row=1, column=0, columnspan=3)
+
+            self.object_id = tk.StringVar()
+            self.entryBox = ttk.Entry(self.entry, textvariable=self.object_id, font=tkFont.Font(size=int(0.024 * width)))
+            self.entryBox.grid(row=2, column=0, columnspan=3)
+
+            self.entryKeyboard()
+
+            ok = ttk.Button(self.entry, text='Ok', command=self.search_object_id)
+            ok.grid(row=7, column=2, columnspan=3)
 
         self.entry.grid_columnconfigure([0, 1, 2], weight=1)
         self.entry.grid_rowconfigure([1, 2, 7], weight=1)
@@ -68,6 +81,10 @@ class Entry:
 
     def correct_object_id(self):
         self.mainMenu.correct_objectID(self.object_id.get())
+        self.object_id.set('')
+    
+    def search_object_id(self):
+        self.mainMenu.searchObjectNumber(self.object_id.get())
         self.object_id.set('')
     
     def show(self):

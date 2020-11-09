@@ -17,7 +17,7 @@ class Selection:
         restart = ttk.Button(self.selection, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        if rackPaintings == None:
+        if rackPaintings == None and location != None and objectID != None:
             title = ttk.Label(self.selection, text='Select the correct painting')
             title.grid(row=1, column=0, columnspan=2)
 
@@ -42,7 +42,7 @@ class Selection:
                 select.grid(row=3, column=0, columnspan=2)
             else:
                 self.options.insert(c, f'Found no results for object number {objectID}')
-        else:
+        elif rackPaintings != None and location == None and objectID == None:
             title = ttk.Label(self.selection, text='Rack Search Results')
             title.grid(row=1, column=0, columnspan=2)
 
@@ -63,6 +63,28 @@ class Selection:
                     c += 1
             else:
                 self.options.insert(c, f'Found no results for that rack number')
+        elif rackPaintings == None and location == None and objectID != None:
+            title = ttk.Label(self.selection, text='Painting Search Results')
+            title.grid(row=1, column=0, columnspan=2)
+
+            self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.02*width)))
+            self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
+            self.options.config(yscrollcommand=self.scrollbar.set)
+            self.scrollbar.config(command=self.options.yview)
+
+            c = 1
+            if self.lookup.object_exists(objectID):
+                self.paintings = self.lookup.get_info(objectID)
+                for i in self.paintings:
+                    if type(i['dimensions']) == type(' '):
+                        dims = i['dimensions']
+                    else:
+                        dims = ' x '.join(str(d) for d in i['dimensions'])
+                    output = f"{i['objectID']} in {i['room']} on {i['location']}. Dimensions (cm): {dims}"
+                    self.options.insert(c, output)
+                    c += 1
+            else:
+                self.options.insert(c, f'Found no results for that object ID number')
 
         self.options.grid(row=2, column=0, columnspan=2, sticky='ew')
         self.scrollbar.grid(row=2, column=1, sticky='nse')
