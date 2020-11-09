@@ -44,3 +44,6 @@ class Verification:
     def hide(self):
         self.verification.pack_forget()
         self.menu.lift()
+
+    def destroy(self):
+        self.verification.destroy()

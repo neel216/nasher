@@ -2,9 +2,8 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 
-
 class Location:
-    def __init__(self, parent, menu, mainMenu, success, painting, lookup, sheet, width):
+    def __init__(self, parent, menu, mainMenu, success=None, painting=None, lookup=None, sheet=None, width=None, selection=None):
         self.location = tk.Frame(master=parent)
         self.location.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
@@ -15,6 +14,7 @@ class Location:
         self.lookup = lookup
         self.sheet = sheet
         self.parent = parent
+        self.selection = selection
         
 
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
@@ -29,7 +29,10 @@ class Location:
 
         self.selectionKeyboard()
 
-        ok = ttk.Button(self.location, text='Ok', command=self.submitRack)
+        if success:
+            ok = ttk.Button(self.location, text='Ok', command=self.submitRack)
+        else:
+            ok = ttk.Button(self.location, text='Ok', command=self.searchRack)
         ok.grid(row=8, column=2, columnspan=3)
 
 
@@ -92,6 +95,10 @@ class Location:
         #self.lookup.edit_location(painting['index'], 'Nasher Painting Storage Room', self.rack.get())
 
         self.success.show()
+    
+    def searchRack(self):
+        rack = self.lookup.get_rack(self.rack.get())
+        self.mainMenu.searchRackNumber(rack)
 
     def show(self):
         self.location.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
@@ -100,3 +107,6 @@ class Location:
     def hide(self):
         self.location.place_forget()
         self.menu.lift()
+
+    def destroy(self):
+        self.location.destroy()

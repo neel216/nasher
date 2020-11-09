@@ -31,3 +31,6 @@ class Success:
     def hide(self):
         self.success.pack_forget()
         self.menu.lift()
+    
+    def destroy(self):
+        self.success.destroy()

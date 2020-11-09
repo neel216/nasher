@@ -139,3 +139,6 @@ class Camera:
     def hide(self):
         self.camera.place_forget()
         self.menu.lift()
+    
+    def destroy(self):
+        self.camera.destroy()

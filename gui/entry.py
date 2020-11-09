@@ -77,3 +77,6 @@ class Entry:
     def hide(self):
         self.entry.place_forget()
         self.menu.lift()
+    
+    def destroy(self):
+        self.entry.destroy()
