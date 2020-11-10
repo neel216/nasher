@@ -21,7 +21,7 @@ class Selection:
             title = ttk.Label(self.selection, text='Select the correct painting')
             title.grid(row=1, column=0, columnspan=2)
 
-            self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.0165 * width)))
+            self.options = tk.Listbox(self.selection, height=int(0.01 * width), font=tkFont.Font(size=int(0.0165 * width)))
             self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
             self.options.config(yscrollcommand=self.scrollbar.set)
             self.scrollbar.config(command=self.options.yview)
@@ -46,7 +46,7 @@ class Selection:
             title = ttk.Label(self.selection, text='Rack Search Results')
             title.grid(row=1, column=0, columnspan=2)
 
-            self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.0165 * width)))
+            self.options = tk.Listbox(self.selection, height=int(0.01 * width), font=tkFont.Font(size=int(0.0165 * width)))
             self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
             self.options.config(yscrollcommand=self.scrollbar.set)
             self.scrollbar.config(command=self.options.yview)
@@ -67,7 +67,7 @@ class Selection:
             title = ttk.Label(self.selection, text='Painting Search Results')
             title.grid(row=1, column=0, columnspan=2)
 
-            self.options = tk.Listbox(self.selection, height=int(0.007 * width), font=tkFont.Font(size=int(0.0165 * width)))
+            self.options = tk.Listbox(self.selection, height=int(0.015 * width), font=tkFont.Font(size=int(0.0165 * width)))
             self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
             self.options.config(yscrollcommand=self.scrollbar.set)
             self.scrollbar.config(command=self.options.yview)
@@ -84,7 +84,7 @@ class Selection:
                     self.options.insert(c, output)
                     c += 1
             else:
-                self.options.insert(c, f'Found no results for that object ID number')
+                self.options.insert(c, f'Found no results for object number {objectID}')
 
         self.options.grid(row=2, column=0, columnspan=2, sticky='ew')
         self.scrollbar.grid(row=2, column=1, sticky='nse')
