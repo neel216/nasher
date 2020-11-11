@@ -1,12 +1,11 @@
 """
-camera_transform.py
+camera_ocr.py
 Author: Phillip Williams (pcw14)
 Acknowledgements to Adrian Rosebrock of pyimagesearch.com for his
 tutorials on AI and image processing.
 
-Same as camera.py, but with the output processed under a Canny edge filter.
-Contour tracking and highlights are added.
-Minimal user input and perspective transform is added.
+A script to launch a camera window, interpret any characters in the screen,
+and return those characters as a string.
 """
 import time
 boot_start = time.time()
@@ -32,6 +31,7 @@ boot_end = time.time()
 boot_dur = boot_end - boot_start
 print("Boot time: {} seconds.".format(boot_dur))
 
+fullscreen = True
 freeze_frame = False
 resize_transform_out = True
 image = None
@@ -85,7 +85,10 @@ camera = PiCamera()
 camera_init(camera, (640, 480))
 rawCapture = PiRGBArray(camera, size=camera.resolution)
 window_title = "Camera"
-cv2.namedWindow(window_title)
+if fullscreen:
+    cv2.namedWindow(window_title, cv2.WND_PROP_FULLSCREEN)
+else:
+    cv2.namedWindow(window_title)
 cv2.setWindowProperty(window_title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 cv2.setMouseCallback(window_title, onMouse)
 
