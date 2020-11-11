@@ -5,6 +5,7 @@ from tensorflow.keras.models import load_model
 from ocr import process_ocr
 from lookup import Lookup
 from sheets import Sheet
+import camera_ocr
 
 
 class MainMenu:
@@ -65,7 +66,7 @@ class MainMenu:
         self.mainMenu.grid_rowconfigure([0, 1, 2, 3, 4], weight=1)
 
         self.mainMenu.lift()
-    
+
     def refresh_screens(self):
         for function in self.screens:
             if function == self.screen:
@@ -92,9 +93,9 @@ class MainMenu:
         print('[INFO] Loaded verification screen')
         self.camera = camera.Camera(self.parent, self.mainMenu, self, self.verification)
         print('[INFO] Loaded camera screen')
-    
+
         self.camera.show()
-    
+
     def delete_change_painting(self):
         self.success.destroy()
         self.location.destroy()
@@ -111,7 +112,7 @@ class MainMenu:
         self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width, selection=self.selection)
 
         self.entry.show()
-    
+
     def delete_lookup_painting(self):
         self.entry.destroy()
         self.selection.destroy()
@@ -125,7 +126,7 @@ class MainMenu:
                                           lookup=self.lookup,
                                           width=self.width,
                                           selection=self.selection)
-        
+
         self.location.show()
 
     def delete_lookup_rack(self):
@@ -137,7 +138,7 @@ class MainMenu:
         self.screen = 'scan_rack'
 
         self.soon = comingSoon.ComingSoon(self.parent, self.mainMenu, self)
-        
+
         self.soon.show()
 
     def delete_scan_rack(self):
@@ -148,21 +149,22 @@ class MainMenu:
         self.screen = 'add_painting'
 
         self.soon = comingSoon.ComingSoon(self.parent, self.mainMenu, self)
-        
+
         self.soon.show()
 
     def delete_add_painting(self):
         self.soon.destroy()
 
     def capture_image(self):
-        self.image = self.camera.get_picture()
-        process_ocr(self.model, self.image)
-        self.objectID = '2016.19.1' # process image and get this from OCR
+        #self.image = self.camera.get_picture()
+        # process_ocr(self.model, self.image)
+        #self.objectID = '2016.19.1' # process image and get this from OCR
+        self.objectID = camera_ocr.run()
 
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
-    
+
     def correct_objectID(self, objectID):
         self.objectID = objectID
 
@@ -173,12 +175,12 @@ class MainMenu:
         self.selectedObjectID = selectedObjectID
         self.location = location.Location(self.parent, self.mainMenu, self, self.success, self.selectedObjectID, self.lookup, self.sheet, self.width)
         self.location.show()
-    
+
     def searchRackNumber(self, rackInfo):
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, rackPaintings=rackInfo)
         self.location.hide()
         self.selection.show()
-    
+
     def searchObjectNumber(self, objectID):
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, objectID=objectID)
         self.entry.hide()
