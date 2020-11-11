@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import cv2
-from PIL import Image, ImageTk
 
 class Camera:
     def __init__(self, parent, menu, mainMenu, nextPage):
@@ -12,7 +10,6 @@ class Camera:
         self.nextPage = nextPage
         self.menu = menu
         self.parent = parent
-
 
         restart = ttk.Button(self.camera, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
