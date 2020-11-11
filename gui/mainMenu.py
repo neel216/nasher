@@ -77,24 +77,15 @@ class MainMenu:
         self.screen = 'change_painting'
 
         self.success = success.Success(self.parent, self.mainMenu, self)
-        print('[INFO] Loaded success screen')
         self.location = location.Location(self.parent, self.mainMenu, self,
                                           success=self.success,
                                           painting=self.selectedObjectID,
                                           lookup=self.lookup,
                                           sheet=self.sheet,
                                           width=self.width)
-        print('[INFO] Loaded location screen')
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
-        print('[INFO] Loaded selection screen')
         self.entry = entry.Entry(self.parent, self.mainMenu, self, self.width)
-        print('[INFO] Loaded entry screen')
-        self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
-        print('[INFO] Loaded verification screen')
-        self.camera = camera.Camera(self.parent, self.mainMenu, self, self.verification)
-        print('[INFO] Loaded camera screen')
 
-        self.camera.show()
+        self.capture_image()
 
     def delete_change_painting(self):
         self.success.destroy()
@@ -102,7 +93,7 @@ class MainMenu:
         self.selection.destroy()
         self.entry.destroy()
         self.verification.destroy()
-        self.camera.destroy()
+        #self.camera.destroy()
 
     def lookup_painting(self):
         self.refresh_screens()
