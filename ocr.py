@@ -105,8 +105,8 @@ def process_ocr(model, frame, test=False):
             i = np.argmax(pred)
             prob = pred[i]
             label = labelNames[i]
-            if label in '0123456789':
-                print(label, prob * 100)
+            #if label in '0123456789':
+                #print(label, prob * 100)
             if label in '0123456789' and prob > 0.55:
                 # draw the prediction on the image
                 #print("[INFO] {} - {:.2f}%".format(label, prob * 100))
@@ -117,6 +117,10 @@ def process_ocr(model, frame, test=False):
 
                 # show the image
         #print(f'Time to process image: {end - start} seconds')
-        print(locs)
+        #print(locs)
+        out = []
+        for c in locs:
+           out.append(str(c[0]))
+        return "".join(out)
     else:
         return
