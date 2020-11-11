@@ -228,6 +228,19 @@ class Lookup:
         self.locations.to_csv(self.loc_path)
         self.dimensions.to_csv(self.dim_path)
         return True
+    
+    def object_exists(self, objectID):
+        '''
+        Checks to see if a given object ID number exists in the locations database
+
+        :param objectID: string that describes an object number
+        :return: returns a boolean describing whether or not the given object ID is in the location database
+        '''
+        locationList = self.locations['objectID'].tolist()
+        for i in locationList:
+            if objectID in i:
+                return True
+        return False
 
 if __name__ == '__main__':
     lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')

@@ -2,25 +2,28 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 
-
 class Location:
-    def __init__(self, parent, menu, mainMenu, success, painting, lookup, sheet, width):
+    def __init__(self, parent, menu, mainMenu, success=None, painting=None, lookup=None, sheet=None, width=None, selection=None):
         self.location = tk.Frame(master=parent)
         self.location.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.location.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
         self.success = success
         self.painting = painting
         self.lookup = lookup
         self.sheet = sheet
+        self.parent = parent
+        self.selection = selection
         
 
         restart = ttk.Button(self.location, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
-        title = ttk.Label(self.location, text='Enter the new rack')
+        if success:
+            title = ttk.Label(self.location, text='Enter the new rack')
+        else:
+            title = ttk.Label(self.location, text='Enter the rack')
         title.grid(row=1, column=0, columnspan=3)
         
         self.rack = tk.StringVar()
@@ -29,7 +32,10 @@ class Location:
 
         self.selectionKeyboard()
 
-        ok = ttk.Button(self.location, text='Ok', command=self.submitRack)
+        if success:
+            ok = ttk.Button(self.location, text='Ok', command=self.submitRack)
+        else:
+            ok = ttk.Button(self.location, text='Ok', command=self.searchRack)
         ok.grid(row=8, column=2, columnspan=3)
 
 
@@ -38,8 +44,17 @@ class Location:
         self.location.grid_rowconfigure([3, 4, 5, 6, 7], weight=1)
 
     def appendChar(self, char):
-        i = len(self.rack.get())
-        self.entry.insert(i, char)
+        if len(self.rack.get()) == 0 and char in 'AB':
+            pass
+        elif len(self.rack.get()) == 2 and self.rack.get()[-1] in 'AB':
+            pass
+        elif len(self.rack.get()) == 2 and self.rack.get()[-1] not in 'AB' and char not in 'AB':
+            pass
+        elif len(self.rack.get()) == 3:
+            pass
+        else:
+            i = len(self.rack.get())
+            self.entry.insert(i, char)
     
     def deleteChar(self):
         i = len(self.rack.get()) - 1
@@ -83,9 +98,18 @@ class Location:
         #self.lookup.edit_location(painting['index'], 'Nasher Painting Storage Room', self.rack.get())
 
         self.success.show()
+    
+    def searchRack(self):
+        rack = self.lookup.get_rack(self.rack.get())
+        self.mainMenu.searchRackNumber(rack)
 
     def show(self):
+        self.location.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.location.lift()
 
     def hide(self):
+        self.location.place_forget()
         self.menu.lift()
+
+    def destroy(self):
+        self.location.destroy()

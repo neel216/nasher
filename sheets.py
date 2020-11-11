@@ -10,19 +10,21 @@ from datetime import datetime
 
 
 class Sheet:
-    def __init__(self, spreadsheet_id, spreadsheet_range, value_input_option='RAW'):
+    def __init__(self, spreadsheet_id, spreadsheet_range1, spreadsheet_range2, value_input_option='RAW'):
         '''
         Constructs a Sheet object.
 
         :param spreadsheet_id: the ID of the spreadsheet taken directly from the document's URL
-        :param spreadsheet_range: the range of the spreadsheet to read (SheetName!topLeftCell:bottomRightCell))
+        :param spreadsheet_range1: the range of the spreadsheet to read (SheetName!topLeftCell:bottomRightCell))
+        :param spreadsheet_range2: another range of the spreadsheet to read (SheetName!topLeftCell:bottomRightCell))
         :param value_input_option: the way to modify cell entries into the spreadsheet
         :return: returns nothing
         '''
         self.scopes = ['https://www.googleapis.com/auth/spreadsheets']
         self.id = spreadsheet_id
         self.value_input_option = value_input_option
-        self.range = spreadsheet_range
+        self.range1 = spreadsheet_range1
+        self.range2 = spreadsheet_range2
 
         creds = None
         # The file token.pickle stores the user's access and refresh tokens, and is
@@ -31,6 +33,7 @@ class Sheet:
         if os.path.exists('token.pickle'):
             with open('token.pickle', 'rb') as token:
                 creds = pickle.load(token)
+
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -54,9 +57,11 @@ class Sheet:
 
         :return: a nested list where each list is a row and each entry in the list is a cell
         '''
-        result = self.sheet.values().get(spreadsheetId=self.id, range=self.range).execute()
+        # Get values from spreadsheet
+        result = self.sheet.values().get(spreadsheetId=self.id, range=self.range1).execute()
         values = result.get('values', [])
 
+        # Print rows if data was found in spreadsheet
         if not values:
             print('No data found.')
         else:
@@ -72,6 +77,7 @@ class Sheet:
         :param rows: a nested list containing the rows to append to the spreadsheet
         :return: returns nothing
         '''
+        # Adds times in isoformat as first element in each row
         for i in rows:
             i.insert(0, datetime.now().isoformat())
 
@@ -79,19 +85,29 @@ class Sheet:
             'values': rows
         }
         
-        result = self.sheet.values().append(
+        # Adds data to changes spreadsheet
+        result1 = self.sheet.values().append(
             spreadsheetId=self.id,
-            range=self.range,
+            range=self.range1,
             valueInputOption=self.value_input_option,
             body=body).execute()
         
-        print(f'{result.get("updates").get("updatedCells")} cells updated.')
+        # Adds data to history spreadsheet
+        result2 = self.sheet.values().append(
+            spreadsheetId=self.id,
+            range=self.range2,
+            valueInputOption=self.value_input_option,
+            body=body).execute()
+        
+        # Print status update
+        print(f'{result1.get("updates").get("updatedCells")} cells updated in changes spreadsheet.')
+        print(f'{result2.get("updates").get("updatedCells")} cells updated in history spreadsheet.')
 
         return True
 
 
 if __name__ == '__main__':
-    sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C')
+    sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C', 'History Logger!A1:C')
 
     sheet.read_sheet()
 

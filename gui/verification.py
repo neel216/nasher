@@ -8,11 +8,11 @@ class Verification:
         self.verification = tk.Frame(master=parent)
         self.verification.pack_propagate(0) #Don't allow the widgets inside to determine the frame's width / height
         #camera.pack(fill=tk.BOTH, expand=1) #Expand the frame to fill the root window
-        self.verification.place(in_=parent, x=0, y=0, relwidth=1, relheight=1)
         self.mainMenu = mainMenu
         self.menu = menu
         self.entryPage = entryPage
         self.selectionPage = selectionPage
+        self.parent = parent
 
         restart = ttk.Button(self.verification, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, columnspan=2, sticky='w')
@@ -37,8 +37,13 @@ class Verification:
         self.verification.grid_rowconfigure([1, 2, 3, 4], weight=1)
 
     def show(self):
+        self.verification.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.verification.lift()
         cv2.destroyAllWindows()
 
     def hide(self):
+        self.verification.pack_forget()
         self.menu.lift()
+
+    def destroy(self):
+        self.verification.destroy()
