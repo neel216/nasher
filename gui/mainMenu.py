@@ -151,7 +151,8 @@ class MainMenu:
         # process_ocr(self.model, self.image)
         #self.objectID = '2016.19.1' # process image and get this from OCR
         print('Capturing Image')
-        self.objectID = camera_ocr.run()
+        cam = camera_ocr.CamOCR()
+        self.objectID = cam.run()
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()

@@ -24,7 +24,7 @@ import numpy as np
 import imutils
 import cv2
 from time import sleep, time
-
+'''
 start_ = time()
 # load the handwriting OCR model
 print("[INFO] loading handwriting OCR model...")
@@ -35,7 +35,7 @@ end_ = time()
 
 test = False # if true, displays the image as each filter is applied. if false, skips straight to the prediction image
 
-
+'''
 
 cam = cv2.VideoCapture(0)
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 464) # 320
@@ -49,7 +49,7 @@ while True:
 		break
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 	blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-	edged = cv2.Canny(blurred, 30, 50, apertureSize=3)
+	edged = cv2.Canny(blurred, 30, 150)
 	cv2.imshow("Canny", edged)
 	#ret3, th3 = cv2.threshold(blurred,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 	#cv2.imshow('Otsu', th3)

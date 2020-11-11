@@ -61,6 +61,11 @@ class CamOCR():
         self.ocr_stage = 0  # 0: scanning, 1: captured / displaying original, 2: process original / display ptransform
         self.cont = []
         self.ocr_out = None
+        y1 = 464 - 50
+        y2 = y1 + 40
+        x1 = 116
+        x2 = x1 + 200
+        self.button = [y1, y2, x1, x2]
 
         # camera and window initialization
         self.camera = PiCamera()
@@ -77,7 +82,7 @@ class CamOCR():
     def onMouse(self, event, x, y, flags, param):
         global ocr_img, ocr_stage, image, rawCapture, cont, model, ocr_out, camera # retrieve global vars
 
-        if event == cv2.EVENT_LBUTTONDOWN:
+        if event == cv2.EVENT_LBUTTONDOWN and y > self.button[0] and y < self.button[1] and x > self.button[2] and x < self.button[3]:
             if self.ocr_stage == 0:
                 self.ocr_stage += 1
                 self.ocr_out = process_ocr(model, image)
@@ -107,6 +112,7 @@ class CamOCR():
             if(self.ocr_stage == 0):
                 rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
                 image = rot
+                image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
                 cv2.imshow(self.window_title, image)
 
             self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
