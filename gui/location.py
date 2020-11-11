@@ -95,7 +95,7 @@ class Location:
         self.sheet.add_rows([[self.painting['objectID'], self.painting['artist'], self.painting['otherInfo'], self.painting['room'] + ', ' + self.painting['location'], 'Nasher Painting Storage Room' + ', ' + self.rack.get()]])
 
         # update local data
-        #self.lookup.edit_location(painting['index'], 'Nasher Painting Storage Room', self.rack.get())
+        self.lookup.edit_location(self.painting['index'], 'Nasher Painting Storage Room', self.rack.get())
 
         self.success.show()
     
