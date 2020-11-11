@@ -76,6 +76,7 @@ class MainMenu:
         self.refresh_screens()
         self.screen = 'change_painting'
 
+        print('Loading Changing Painting screen')
         self.success = success.Success(self.parent, self.mainMenu, self)
         self.location = location.Location(self.parent, self.mainMenu, self,
                                           success=self.success,
@@ -93,7 +94,6 @@ class MainMenu:
         self.selection.destroy()
         self.entry.destroy()
         self.verification.destroy()
-        #self.camera.destroy()
 
     def lookup_painting(self):
         self.refresh_screens()
@@ -150,8 +150,8 @@ class MainMenu:
         #self.image = self.camera.get_picture()
         # process_ocr(self.model, self.image)
         #self.objectID = '2016.19.1' # process image and get this from OCR
+        print('Capturing Image')
         self.objectID = camera_ocr.run()
-
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
