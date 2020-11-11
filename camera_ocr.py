@@ -12,7 +12,6 @@ boot_start = time.time()
 
 from picamera.array import PiRGBArray
 from picamera import PiCamera
-import time
 import cv2
 import numpy as np
 
@@ -31,14 +30,7 @@ boot_end = time.time()
 boot_dur = boot_end - boot_start
 print("Boot time: {} seconds.".format(boot_dur))
 
-fullscreen = True
-freeze_frame = False
-resize_transform_out = True
-image = None
-ocr_img = None
-ocr_stage = 0  # 0: scanning, 1: captured / displaying original, 2: process original / display ptransform
-cont = []
-ocr_out = None
+
 
 mload_start = time.time()
 model = load_model('/home/pi/production/nasher/data/handwriting.model', compile = False)
@@ -54,63 +46,85 @@ def camera_init(cam, res):
     # rawCapture = PiRGBArray(cam, size=cam.resolution)
     time.sleep(0.1)
 
-def onMouse(event, x, y, flags, param):
-    global ocr_img, ocr_stage, image, rawCapture, cont, model, ocr_out, camera # retrieve global vars
-
-    if event == cv2.EVENT_LBUTTONDOWN:
-        if ocr_stage == 0:
-            ocr_stage += 1
-            ocr_out = process_ocr(model, image)
-            cv2.imshow(window_title, image)
-            print("Image captured and processed. Click again to review information.")
-        elif ocr_stage == 1:
-            ocr_stage += 1
-            if ocr_out is not None:
-                print("OCR Read: {}".format(ocr_out))
-            #print("Returning to scanning mode.")
 
 
-# camera and window initialization
-camera = PiCamera()
-camera_init(camera, (640, 480))
-rawCapture = PiRGBArray(camera, size=camera.resolution)
-window_title = "Camera"
-if fullscreen:
-    cv2.namedWindow(window_title, cv2.WND_PROP_FULLSCREEN)
-else:
-    cv2.namedWindow(window_title)
-cv2.setWindowProperty(window_title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
-cv2.setMouseCallback(window_title, onMouse)
 
-def run():
-    global ocr_img, ocr_stage, image, rawCapture, cont, ocr_out # retrieve global vars
 
-    if ocr_out is not None:
-        return ocr_out
 
-    for frame in camera.capture_continuous(rawCapture, format='bgr', use_video_port=True):
+class CamOCR():
+    def __init__(self):
+        self.fullscreen = True
+        self.freeze_frame = False
+        self.resize_transform_out = True
+        self.image = None
+        self.ocr_img = None
+        self.ocr_stage = 0  # 0: scanning, 1: captured / displaying original, 2: process original / display ptransform
+        self.cont = []
+        self.ocr_out = None
 
-        #if ocr_out is not None:
-        #    return ocr_out
+        # camera and window initialization
+        self.camera = PiCamera()
+        camera_init(self.camera, (640, 480))
+        self.rawCapture = PiRGBArray(self.camera, size=self.camera.resolution)
+        self.window_title = "Camera"
+        if self.fullscreen:
+            cv2.namedWindow(self.window_title, cv2.WND_PROP_FULLSCREEN)
+        else:
+            cv2.namedWindow(self.window_title)
+        cv2.setWindowProperty(self.window_title, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+        cv2.setMouseCallback(self.window_title, self.onMouse)
 
-        if freeze_frame:  # if true, wait for keypress to advance to next frame.
-            cv2.waitKey(0)
+    def onMouse(self, event, x, y, flags, param):
+        global ocr_img, ocr_stage, image, rawCapture, cont, model, ocr_out, camera # retrieve global vars
 
-        if(ocr_stage == 0):
-            rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
-            image = rot
-            cv2.imshow(window_title, image)
+        if event == cv2.EVENT_LBUTTONDOWN:
+            if self.ocr_stage == 0:
+                self.ocr_stage += 1
+                self.ocr_out = process_ocr(model, image)
+                cv2.imshow(self.window_title, image)
+                print("Image captured and processed. Click again to review information.")
+            elif self.ocr_stage == 1:
+                self.ocr_stage += 1
+                if self.ocr_out is not None:
+                    print("OCR Read: {}".format(self.ocr_out))
+                #print("Returning to scanning mode.")
 
-        rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
+    def run(self):
+        global ocr_img, ocr_stage, image, rawCapture, cont, ocr_out # retrieve global vars
 
-        if (cv2.waitKey(1) == 27 & 0xFF) | (ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
-            cv2.destroyAllWindows()
-            print("Video feed closed successfully.")
-            if ocr_out is not None:
-                return ocr_out
-            else:
-                return None # on user exit, return no string.
+        if self.ocr_out is not None:
+            return self.ocr_out
+
+        v = self.ocr_stage < 3
+        for frame in self.camera.capture_continuous(self.rawCapture, format='bgr', use_video_port=v):
+
+            #if ocr_out is not None:
+            #    return ocr_out
+
+            if self.freeze_frame:  # if true, wait for keypress to advance to next frame.
+                cv2.waitKey(0)
+
+            if(self.ocr_stage == 0):
+                rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
+                image = rot
+                cv2.imshow(self.window_title, image)
+
+            self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
+
+            if (cv2.waitKey(1) == 27 & 0xFF) | (self.ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
+
+                #self.rawCapture.truncate(0)
+                time.sleep(1)
+                self.camera.close()
+                cv2.destroyAllWindows()
+                print("Video feed closed successfully.")
+                if self.ocr_out is not None:
+                    return self.ocr_out
+                else:
+                    return None # on user exit, return no string.
+                break
 
 
 if __name__ == "__main__":
-    run()
+    cam = CamOCR()
+    cam.run()
