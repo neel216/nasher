@@ -58,23 +58,13 @@ def onMouse(event, x, y, flags, param):
     global ocr_img, ocr_stage, image, rawCapture, cont, model, ocr_out, camera # retrieve global vars
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        #print('Mouse input at: x = %d, y = %d'%(x, y))
         if ocr_stage == 0:
             ocr_stage += 1
-            ocr_img = image
+            ocr_out = process_ocr(model, image)
+            cv2.imshow(window_title, image)
             print("Image captured and processed. Click again to review information.")
         elif ocr_stage == 1:
             ocr_stage += 1
-            ocr_out = process_ocr(model, ocr_img)
-            #ocr_img = four_point_transform(ocr_img, cont)
-            cv2.imshow(window_title, ocr_img)
-
-            print("Modify information? Click again to return to scanning mode.")
-        elif ocr_stage == 2:
-            ocr_stage += 1
-            #save img
-            #exit
-            #return "eggs"
             if ocr_out is not None:
                 print("OCR Read: {}".format(ocr_out))
             #print("Returning to scanning mode.")
@@ -113,7 +103,7 @@ def run():
 
         rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
 
-        if (cv2.waitKey(1) == 27 & 0xFF) | (ocr_stage == 3):  # registers Esc keypress, closes video feed and exits.
+        if (cv2.waitKey(1) == 27 & 0xFF) | (ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
             cv2.destroyAllWindows()
             print("Video feed closed successfully.")
             if ocr_out is not None:
