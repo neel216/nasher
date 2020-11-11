@@ -17,7 +17,7 @@ class Camera:
         self.lmain = tk.Label(self.camera)
         self.lmain.grid(row=1, column=0)
 
-        takePicture = ttk.Button(self.camera, text='Open Camera', command=print('urmom'))
+        takePicture = ttk.Button(self.camera, text='Open Camera', command=self.mainMenu.capture_image)
         takePicture.grid(row=2, column=0)
 
         self.camera.grid_columnconfigure(0, weight=1)
@@ -26,10 +26,10 @@ class Camera:
     def show(self):
         self.camera.place(in_=self.parent, x=0, y=0, relwidth=1, relheight=1)
         self.camera.lift()
-    
+
     def hide(self):
         self.camera.place_forget()
         self.menu.lift()
-    
+
     def destroy(self):
         self.camera.destroy()

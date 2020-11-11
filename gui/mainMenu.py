@@ -26,7 +26,7 @@ class MainMenu:
         self.objectID = ''
         self.selectedObjectID = ''
         self.lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
-        self.model = load_model('data/handwriting.model')
+        #self.model = load_model('data/handwriting.model')
         self.sheet = Sheet('1N20NKyWzmx5AJJz9GlGuv7SC3nnVW5l3hkYDFsWdXx0', 'TMS Changes!A1:C', 'History Logger!A1:C')
         self.width = width
         self.height = height
