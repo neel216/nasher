@@ -1,8 +1,8 @@
 from gui import camera, verification, entry, selection, location, success, comingSoon
 import tkinter as tk
 from tkinter import ttk
-from tensorflow.keras.models import load_model
-from ocr import process_ocr
+#from tensorflow.keras.models import load_model
+#from ocr import process_ocr
 from lookup import Lookup
 from sheets import Sheet
 import camera_ocr
