@@ -35,7 +35,6 @@ def process_ocr(model, frame, scan_rect, test=False):
         cv2.imshow('Canny', edged)
         cv2.waitKey(0)
     #print(edged)
-    (x, y, w, h) = cv2.boundingRect(c)
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if len(cnts) > 0:
         #print(cnts)
