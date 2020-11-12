@@ -61,6 +61,9 @@ class CamOCR():
         self.ocr_stage = 0  # 0: scanning, 1: captured / displaying original, 2: process original / display ptransform
         self.cont = []
         self.ocr_out = None
+        self.horiz = 50
+        self.vert = 100
+        self.scan_rect = [self.horiz, self.vert, 640 - 2*self.horiz, 480 - 2*self.vert]
 
         x1 = 30
         y1 = 380
@@ -86,7 +89,7 @@ class CamOCR():
         if event == cv2.EVENT_LBUTTONDOWN and y > self.button[0] and y < self.button[1] and x > self.button[2] and x < self.button[3]:
             if self.ocr_stage == 0:
                 self.ocr_stage += 1
-                self.ocr_out = process_ocr(model, image)
+                self.ocr_out = process_ocr(model, image, self.scan_rect)
                 image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
                 cv2.putText(image, 'Exit Camera', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
                 cv2.imshow(self.window_title, image)
@@ -117,6 +120,7 @@ class CamOCR():
                 image = rot
                 image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
                 cv2.putText(image, 'Take Picture', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
+                cv2.rectangle(self.image, (self.scan_rect[0],self.scan_rect[1]), (self.scan_rect[2],self.scan_rect[3]), (0, 255, 0), 2)
                 cv2.imshow(self.window_title, image)
 
             self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
