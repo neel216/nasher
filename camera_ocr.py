@@ -9,8 +9,14 @@ and return those characters as a string.
 import time
 boot_start = time.time()
 
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+try:
+    from picamera.array import PiRGBArray
+    from picamera import PiCamera
+    print('On Raspberry Pi')
+    rpi = True
+except ModuleNotFoundError:
+    print('Not on Raspberry Pi')
+    rpi = False
 import cv2
 import numpy as np
 
@@ -32,27 +38,27 @@ print("Boot time: {} seconds.".format(boot_dur))
 
 
 mload_start = time.time()
-model = load_model('/home/pi/production/nasher/data/handwriting.model', compile = False)
+model = load_model('data/handwriting.model', compile=False)
 mload_end = time.time()
 mload_dur = mload_end - mload_start
 print("Model loading time: {} seconds.".format(mload_dur))
 
 def camera_init(cam, res):
-    if cam.closed:
-        cam = PiCamera()
-    cam.resolution = res
-    cam.framerate = 32
-    # rawCapture = PiRGBArray(cam, size=cam.resolution)
+    if rpi:
+        if cam.closed:
+            cam = PiCamera()
+        cam.resolution = res
+        cam.framerate = 32
+        # rawCapture = PiRGBArray(cam, size=cam.resolution)
+    else:
+        cam.set(cv2.CAP_PROP_FRAME_WIDTH, res[0])
+        cam.set(cv2.CAP_PROP_FRAME_HEIGHT, res[1])
     time.sleep(0.1)
-
-
-
-
 
 
 class CamOCR():
     def __init__(self):
-        self.fullscreen = True
+        fullscreen = True
         self.freeze_frame = False
         self.resize_transform_out = True
         self.image = None
@@ -68,11 +74,16 @@ class CamOCR():
         self.button = [y1 - 10, y2 - 10, x1 + 10, x2 - 10]
 
         # camera and window initialization
-        self.camera = PiCamera()
-        camera_init(self.camera, (640, 480))
-        self.rawCapture = PiRGBArray(self.camera, size=self.camera.resolution)
+        if rpi:
+            self.camera = PiCamera()
+            camera_init(self.camera, (640, 480))
+            self.rawCapture = PiRGBArray(self.camera, size=self.camera.resolution)
+        else:
+            self.camera = cv2.VideoCapture(0)
+            camera_init(self.camera, (640, 480))
+            
         self.window_title = "Camera"
-        if self.fullscreen:
+        if fullscreen:
             cv2.namedWindow(self.window_title, cv2.WND_PROP_FULLSCREEN)
         else:
             cv2.namedWindow(self.window_title)
@@ -103,35 +114,64 @@ class CamOCR():
             return self.ocr_out
 
         v = self.ocr_stage < 3
-        for frame in self.camera.capture_continuous(self.rawCapture, format='bgr', use_video_port=v):
 
-            #if ocr_out is not None:
-            #    return ocr_out
+        if rpi:
+            for frame in self.camera.capture_continuous(self.rawCapture, format='bgr', use_video_port=v):
 
-            if self.freeze_frame:  # if true, wait for keypress to advance to next frame.
-                cv2.waitKey(0)
+                #if ocr_out is not None:
+                #    return ocr_out
 
-            if(self.ocr_stage == 0):
-                rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
-                image = rot
-                image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
-                cv2.putText(image, 'Take Picture', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
-                cv2.imshow(self.window_title, image)
+                if self.freeze_frame:  # if true, wait for keypress to advance to next frame.
+                    cv2.waitKey(0)
 
-            self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
+                if(self.ocr_stage == 0):
+                    rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
+                    image = rot
+                    image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
+                    cv2.putText(image, 'Take Picture', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
+                    cv2.imshow(self.window_title, image)
 
-            if (cv2.waitKey(1) == 27 & 0xFF) | (self.ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
+                self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
 
-                #self.rawCapture.truncate(0)
-                time.sleep(1)
-                self.camera.close()
-                cv2.destroyAllWindows()
-                print("Video feed closed successfully.")
-                if self.ocr_out is not None:
-                    return self.ocr_out
-                else:
-                    return None # on user exit, return no string.
-                break
+                if (cv2.waitKey(1) == 27 & 0xFF) | (self.ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
+
+                    #self.rawCapture.truncate(0)
+                    time.sleep(1)
+                    self.camera.close()
+                    cv2.destroyAllWindows()
+                    print("Video feed closed successfully.")
+                    if self.ocr_out is not None:
+                        return self.ocr_out
+                    else:
+                        return None # on user exit, return no string.
+                    break
+        else:
+            while True:
+                ret, frame = self.camera.read()
+                if not ret:
+                    print("Failed to grab frame")
+                    break
+                
+                if self.freeze_frame:  # if true, wait for keypress to advance to next frame.
+                    cv2.waitKey(0)
+
+                if(self.ocr_stage == 0):
+                    image = frame
+                    image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
+                    cv2.putText(image, 'Take Picture', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
+                    cv2.imshow(self.window_title, image)
+                
+                if (cv2.waitKey(1) == 27 & 0xFF) | (self.ocr_stage == 2):  # registers Esc keypress, closes video feed and exits.
+
+                    time.sleep(1)
+                    self.camera.release()
+                    cv2.destroyAllWindows()
+                    print("Video feed closed successfully.")
+                    if self.ocr_out is not None:
+                        return self.ocr_out
+                    else:
+                        return None # on user exit, return no string.
+                    break
 
 
 if __name__ == "__main__":
