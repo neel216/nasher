@@ -21,6 +21,11 @@ def process_ocr(model, frame, test=False):
         cv2.imshow('Blurred', blurred)
         cv2.waitKey(0)
 
+    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, 10, param1=50, param2=12, minRadius=0,maxRadius=20)
+    circles = np.uint16(np.around(circles))
+    for i in circles[0, :]:
+        cv2.circle(blurred, (i[0]. i[1]), i[2], (0,255,0), 2)
+
     # perform edge detection, find contours in the edge map, and sort the
     # resulting contours from left-to-right
     edged = cv2.Canny(blurred, 30, 50, apertureSize=3) # 30, 150 ; 10, 100, 5

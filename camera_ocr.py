@@ -61,11 +61,12 @@ class CamOCR():
         self.ocr_stage = 0  # 0: scanning, 1: captured / displaying original, 2: process original / display ptransform
         self.cont = []
         self.ocr_out = None
-        y1 = 464 - 50
-        y2 = y1 + 40
-        x1 = 116
-        x2 = x1 + 200
-        self.button = [y1, y2, x1, x2]
+
+        x1 = 30
+        y1 = 380
+        x2 = 480 - x1
+        y2 = y1 + 80
+        self.button = [y1 - 10, y2 - 10, x1 + 10, x2 - 10]
 
         # camera and window initialization
         self.camera = PiCamera()
@@ -86,6 +87,8 @@ class CamOCR():
             if self.ocr_stage == 0:
                 self.ocr_stage += 1
                 self.ocr_out = process_ocr(model, image)
+                image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
+                cv2.putText(image, 'Exit Camera', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
                 cv2.imshow(self.window_title, image)
                 print("Image captured and processed. Click again to review information.")
             elif self.ocr_stage == 1:
@@ -113,6 +116,7 @@ class CamOCR():
                 rot = cv2.rotate(frame.array, cv2.ROTATE_90_CLOCKWISE)
                 image = rot
                 image[self.button[0]:self.button[1], self.button[2]:self.button[3]] = 180
+                cv2.putText(image, 'Take Picture', (self.button[2] + (3 * int((self.button[3] - self.button[2]) / 32)), self.button[0] + (3 * int((self.button[1] - self.button[0]) / 4))), cv2.FONT_HERSHEY_PLAIN, 3, (0), 3)
                 cv2.imshow(self.window_title, image)
 
             self.rawCapture.truncate(0) # refresh video feed buffer, to prepare for storing next frame.
