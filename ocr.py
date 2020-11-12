@@ -9,17 +9,23 @@ def process_ocr(model, frame, test=False):
     # it to reduce noise
 
     image = frame
+    '''
     if test:
         cv2.imshow('Image', image)
         cv2.waitKey(0)
+    '''
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    '''
     if test:
         cv2.imshow('Gray', gray)
         cv2.waitKey(0)
+    '''
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    '''
     if test:
         cv2.imshow('Blurred', blurred)
         cv2.waitKey(0)
+    '''
 
     circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, 10, param1=50, param2=12, minRadius=0,maxRadius=20)
     circles = np.uint16(np.around(circles))
@@ -29,9 +35,11 @@ def process_ocr(model, frame, test=False):
     # perform edge detection, find contours in the edge map, and sort the
     # resulting contours from left-to-right
     edged = cv2.Canny(blurred, 30, 50, apertureSize=3) # 30, 150 ; 10, 100, 5
+    '''
     if test:
         cv2.imshow('Canny', edged)
         cv2.waitKey(0)
+    '''
     #print(edged)
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if len(cnts) > 0:
