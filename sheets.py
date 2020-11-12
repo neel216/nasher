@@ -7,6 +7,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from datetime import datetime
+from httplib2 import ServerNotFoundError
 
 
 class Sheet:
@@ -46,10 +47,16 @@ class Sheet:
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
 
-        service = build('sheets', 'v4', credentials=creds)
+        try:
+            service = build('sheets', 'v4', credentials=creds)
+            self.wifi = True
+        except ServerNotFoundError:
+            self.wifi = False
+            print('No Wifi Network Found. Google Sheets API not syncing TMS Changes.')
 
         # Call the Sheets API
-        self.sheet = service.spreadsheets()
+        if self.wifi:
+            self.sheet = service.spreadsheets()
 
     def read_sheet(self):
         '''
@@ -57,18 +64,19 @@ class Sheet:
 
         :return: a nested list where each list is a row and each entry in the list is a cell
         '''
-        # Get values from spreadsheet
-        result = self.sheet.values().get(spreadsheetId=self.id, range=self.range1).execute()
-        values = result.get('values', [])
+        if self.wifi:
+            # Get values from spreadsheet
+            result = self.sheet.values().get(spreadsheetId=self.id, range=self.range1).execute()
+            values = result.get('values', [])
 
-        # Print rows if data was found in spreadsheet
-        if not values:
-            print('No data found.')
-        else:
-            for row in values:
-                print(row)
-        
-        return values
+            # Print rows if data was found in spreadsheet
+            if not values:
+                print('No data found.')
+            else:
+                for row in values:
+                    print(row)
+            
+            return values
 
     def add_rows(self, rows):
         '''
@@ -77,33 +85,34 @@ class Sheet:
         :param rows: a nested list containing the rows to append to the spreadsheet
         :return: returns nothing
         '''
-        # Adds times in isoformat as first element in each row
-        for i in rows:
-            i.insert(0, datetime.now().isoformat())
+        if self.wifi:
+            # Adds times in isoformat as first element in each row
+            for i in rows:
+                i.insert(0, datetime.now().isoformat())
 
-        body = {
-            'values': rows
-        }
-        
-        # Adds data to changes spreadsheet
-        result1 = self.sheet.values().append(
-            spreadsheetId=self.id,
-            range=self.range1,
-            valueInputOption=self.value_input_option,
-            body=body).execute()
-        
-        # Adds data to history spreadsheet
-        result2 = self.sheet.values().append(
-            spreadsheetId=self.id,
-            range=self.range2,
-            valueInputOption=self.value_input_option,
-            body=body).execute()
-        
-        # Print status update
-        print(f'{result1.get("updates").get("updatedCells")} cells updated in changes spreadsheet.')
-        print(f'{result2.get("updates").get("updatedCells")} cells updated in history spreadsheet.')
+            body = {
+                'values': rows
+            }
+            
+            # Adds data to changes spreadsheet
+            result1 = self.sheet.values().append(
+                spreadsheetId=self.id,
+                range=self.range1,
+                valueInputOption=self.value_input_option,
+                body=body).execute()
+            
+            # Adds data to history spreadsheet
+            result2 = self.sheet.values().append(
+                spreadsheetId=self.id,
+                range=self.range2,
+                valueInputOption=self.value_input_option,
+                body=body).execute()
+            
+            # Print status update
+            print(f'{result1.get("updates").get("updatedCells")} cells updated in changes spreadsheet.')
+            print(f'{result2.get("updates").get("updatedCells")} cells updated in history spreadsheet.')
 
-        return True
+            return True
 
 
 if __name__ == '__main__':
