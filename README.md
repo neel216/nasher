@@ -11,3 +11,9 @@ The `credentials.json` file for the Google Sheets module can be accessed by cont
 ## Usage
 
 Run `python3 gui.py` to run the storage management system
+
+If running on Raspbian, make sure to have a Raspberry Pi Camera Module plugged in.
+On any other OS, make sure to have a webcam available for the program.
+
+## User Interface
+![User Interface](https://github.com/neel216/nasher/blob/main/images/ui.png?raw=true)
