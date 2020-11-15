@@ -153,7 +153,7 @@ class MainMenu:
         print('Capturing Image')
         cam = camera_ocr.CamOCR()
         self.objectID = cam.run()
-        self.objectID = '1994.8.1'
+        self.objectID = '1987.9.6'
         self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
         self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
         self.verification.show()
