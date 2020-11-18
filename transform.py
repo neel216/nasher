@@ -1,10 +1,10 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 import numpy as np
 import cv2
-import argparse
 
-# order_points([[283, 224], [276, 264], [313, 263], [320, 231]])
-# order_points([[462, 223], [435, 224], [433, 248], [455, 247]])
-# np.argmax(np.sum([[462, 223], [435, 224], [433, 248], [455, 247]], axis=1))
+
 def order_points(pts):
     rect = np.zeros((4,2), dtype = "float32")
     s = np.sum(np.sum(pts, axis=1), axis=1)
@@ -90,18 +90,8 @@ def border(img, res): # fills in gaps on sides, maintaining original resolution
     print(img.shape)
     return img # cv2.copyMakeBorder(img, top, btm, left, right, cv2.BORDER_CONSTANT, value = (0, 0, 0))#[left:(resW - right), top:(resH - btm)]
 
-"""
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", help = "path to the image file")
-ap.add_argument("-c", "--coords", help = "comma seperated list of source points")
-args = vars(ap.parse_args())
 
-image = cv2.imread(args["image"])
-pts = np.array(eval(args["coords"]), dtype = "float32")
-
-warped = four_point_transform(image, pts)
-
-cv2.imshow("Original", image)
-cv2.imshow("Warped", warped)
-cv2.waitKey(0)
-"""
+if __name__ == '__main__':
+    # order_points([[283, 224], [276, 264], [313, 263], [320, 231]])
+    # order_points([[462, 223], [435, 224], [433, 248], [455, 247]])
+    # np.argmax(np.sum([[462, 223], [435, 224], [433, 248], [455, 247]], axis=1))

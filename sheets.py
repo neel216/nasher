@@ -11,6 +11,10 @@ from httplib2 import ServerNotFoundError
 
 
 class Sheet:
+    '''
+    Contains functions to interface with the Google Sheet API Client by connecting to a Google Sheet,
+    reading the data in a Google Sheet, and writing data to a Google Sheet
+    '''
     def __init__(self, spreadsheet_id, spreadsheet_range1, spreadsheet_range2, value_input_option='RAW'):
         '''
         Constructs a Sheet object.
@@ -47,6 +51,7 @@ class Sheet:
             with open('token.pickle', 'wb') as token:
                 pickle.dump(creds, token)
 
+        # Check if connected to wifi
         try:
             service = build('sheets', 'v4', credentials=creds)
             self.wifi = True
@@ -54,7 +59,7 @@ class Sheet:
             self.wifi = False
             print('No Wifi Network Found. Google Sheets API not syncing TMS Changes.')
 
-        # Call the Sheets API
+        # Call the Sheets API if connected to wifi
         if self.wifi:
             self.sheet = service.spreadsheets()
 
@@ -116,8 +121,10 @@ class Sheet:
 
 
 if __name__ == '__main__':
+    # Create Sheet object
     sheet = Sheet('1cU243sy8jJz91GATvx_TfjWqdklvTCkbnQKEqDF3T8I', 'TMS Changes!A1:C', 'History Logger!A1:C')
 
+    # reads data in sheet and prints it
     sheet.read_sheet()
 
     rows = [
@@ -125,4 +132,5 @@ if __name__ == '__main__':
         [3, 4, 5],
         [6, 7, 8]
     ]
+    # Adds data from "rows" into the Google Sheet
     sheet.add_rows(rows)

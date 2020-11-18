@@ -3,6 +3,7 @@
 '''
 TODO: functions for other rack information (what rack has the most paintings, what rack has the most space)
 '''
+
 import pandas as pd
 import numpy as np
 import re
@@ -49,7 +50,7 @@ class Lookup:
     
     def get_rows_exact(self, df, col, val):
         '''
-        Returns the rows of a dataframe that have a value
+        Returns the rows of a dataframe that have an exact value
         in a certain column
         
         :param df: the dataframe to search
@@ -67,37 +68,44 @@ class Lookup:
         :param objectID: string that represents a painting's object number
         :return: an array of dictionaries containing information about the painting(s) with that object number
         '''
-        #if len(objectID.split('.')) == 2:
-        #    objectNumber = objectID + '.1'
-        #else:
         objectNumber = objectID
         
+        # Get rows in dimensions dataframe that contain the object id
         dims = self.get_rows_contains(self.dimensions, 'objectID', objectNumber, _decimals=decimals)
         _dims = {}
         if len(dims) == 0:
+            # The dimensions dataframe doesn't have the object id
             dims_ = 'Object Number not found'
         else:
+            # Create a list with the basic dimensions info for each painting we found from the dimensions dataframe
             for i in dims.iterrows():
                 _dims[i[1]['objectID']] = [i[1]['width'], i[1]['height'], i[1]['depth']]
 
+        # Get rows in locations dataframe that contain the object id
         loc = self.get_rows_contains(self.locations, 'objectID', objectNumber, _decimals=decimals)
         items = []
+
+        # Create a list with the basic information from each painting we found in the locations dataframe
         for i in loc.iterrows():
-            index = i[0]
-            room = i[1]['room']
-            locationType = i[1]['locationType']
+            index = i[0] # Gets the index of the row in the dataframe for later reference
+            room = i[1]['room'] # Get the "room" location of the painting
+            locationType = i[1]['locationType'] # Get the location "type": Screen or Wall Screen
+            # Determine if the screen has an A or B at the end of it
             locationLetter = i[1]['locationLetter'] if type(i[1]['locationLetter']) != type(np.nan) else ''
+            # Determine if we actually know the location or not
             try:
                 location = f'{int(i[1]["locationID"])}{locationLetter}'
             except ValueError:
                 location = 'unknown'
+            # Determine if we know the dimensions or not
             try:
                 dims_ = _dims[i[1]['objectID']]
             except KeyError:
                 dims_ = 'Object Number not found'
-            artist = i[1]['artist']
-            otherInfo = i[1]['info']
+            artist = i[1]['artist'] # Get the artist's information
+            otherInfo = i[1]['info'] # Get any other infromation about the painting
 
+            # Put all of the information into a dictionary
             info = {
                 'index': index,
                 'objectID': i[1]['objectID'],
@@ -108,12 +116,12 @@ class Lookup:
                 'dimensions': dims_,
                 'otherInfo': otherInfo
             }
-            items.append(info)
+            items.append(info) # Add the dictionary to the list of paintings that match the object ID
         return items
 
     def to_string(self, data):
         '''
-        Given a dictionary containing information about a painting, returns a string with that information
+        Given a dictionary containing information about a painting, returns a readable string with that information
 
         :param data: dictionary containing information about a painting
         :return: string in a readable format describing a painting
@@ -141,23 +149,31 @@ class Lookup:
         :param rackID: string representing the ID of a rack (i.e. 3A, 27, 30B)
         :return: array of dictionaries describing the painting(s) on that rack
         '''
+        # Process rack ID string
         if len(rackID) == 3:
+            # If the rack is formatted with a 2 digit number and a letter
             rackNumber = int(rackID[:-1])
             rackLetter = rackID[-1]
         elif len(rackID) == 2 and len(''.join(re.findall('[a-zA-Z]+', rackID))) == 1:
+            # If the rack is formatted with a 1 digit number and a letter
             rackNumber = int(rackID[0])
             rackLetter = rackID[-1]
         else:
+            # If the rack is formatted with a 2 digit number and no letter
             rackNumber = int(rackID)
             rackLetter = np.nan
-            
+        
+        # Get the location of all paintings that are on the given rack
         loc_ = self.get_rows_exact(self.locations, 'locationID', rackNumber)
         if type(rackLetter) == type('A'):
+            # If the given rack has a rack letter
             loc__ = loc_.loc[loc_['locationLetter'] == rackLetter]
         else:
+            # If the given rack has no rack letter
             loc__ = loc_.loc[loc_['locationLetter'] != 'A'].loc[loc_['locationLetter'] != 'B']
         
         items = []
+        # Put all of the paintings we found into a list of dictionaries describing each painting
         for painting in loc__['objectID']:
             for i in self.get_info(painting):
                 items.append(i)
@@ -174,21 +190,28 @@ class Lookup:
         :param rackID: string to replace the locationID and locationLetter
         :return: returns nothing useful
         '''
+        # Process rack ID string
         if len(rackID) == 3:
-            rackNumber = float(rackID[:-1])
+            # If the rack is formatted with a 2 digit number and a letter
+            rackNumber = int(rackID[:-1])
             rackLetter = rackID[-1]
         elif len(rackID) == 2 and len(''.join(re.findall('[a-zA-Z]+', rackID))) == 1:
-            rackNumber = float(rackID[0])
+            # If the rack is formatted with a 1 digit number and a letter
+            rackNumber = int(rackID[0])
             rackLetter = rackID[-1]
         else:
-            rackNumber = float(rackID)
+            # If the rack is formatted with a 2 digit number and no letter
+            rackNumber = int(rackID)
             rackLetter = np.nan
 
+        # Edit the value of the room
         self.locations.iloc[index, self.locations.columns.get_loc('room')] = new_room
+        # Edit the value of the rack number
         self.locations.iloc[index, self.locations.columns.get_loc('locationID')] = rackNumber
+        # Edit the value of the rack letter
         self.locations.iloc[index, self.locations.columns.get_loc('locationLetter')] = rackLetter
 
-        self.refresh_csv()
+        self.refresh_csv() # Download the CSV so we save the data locally
         return True
     
     def add_painting(self, objectID, room, locationType, rackID, artist, title_and_year, dims):
@@ -204,24 +227,31 @@ class Lookup:
         :param dimensions: an array with 3 float numbers describing the width, height, and depth of the painting in centimeters
         :return: returns nothing useful
         '''
+        # Process rack ID string
         if len(rackID) == 3:
-            rackNumber = float(rackID[:-1])
+            # If the rack is formatted with a 2 digit number and a letter
+            rackNumber = int(rackID[:-1])
             rackLetter = rackID[-1]
         elif len(rackID) == 2 and len(''.join(re.findall('[a-zA-Z]+', rackID))) == 1:
-            rackNumber = float(rackID[0])
+            # If the rack is formatted with a 1 digit number and a letter
+            rackNumber = int(rackID[0])
             rackLetter = rackID[-1]
         else:
-            rackNumber = float(rackID)
+            # If the rack is formatted with a 2 digit number and no letter
+            rackNumber = int(rackID)
             rackLetter = np.nan
         
+        # Get dimensions into a readable string (_ x _ x _ cm)
         dims_ = ' x '.join(str(d) for d in dims) + ' cm'
         width = dims[0]
         height = dims[1]
         depth = dims[2]
 
+        # Add the new painting to the locations dataframe
         self.locations.loc[len(self.locations.index)] = [objectID, room, locationType, rackNumber, rackLetter, artist, title_and_year]
+        # Add the new painting to the dimensions dataframe
         self.dimensions.loc[len(self.dimensions.index)] = [objectID, dims_, width, height, depth]
-        self.refresh_csv()
+        self.refresh_csv() # Download the CSV so we save the data locally
         return True
 
     def refresh_csv(self):
@@ -230,8 +260,8 @@ class Lookup:
 
         :return: returns nothing useful
         '''
-        self.locations.to_csv(self.loc_path)
-        self.dimensions.to_csv(self.dim_path)
+        self.locations.to_csv(self.loc_path) # Override the locations CSV with the data from the location dataframe
+        self.dimensions.to_csv(self.dim_path) # Override the dimensions CSV with the data from the dimensions dataframe
         return True
     
     def object_exists(self, objectID):
@@ -241,20 +271,25 @@ class Lookup:
         :param objectID: string that describes an object number
         :return: returns a boolean describing whether or not the given object ID is in the location database
         '''
-        locationList = self.locations['objectID'].tolist()
+        locationList = self.locations['objectID'].tolist() # Creates a list from the object ID column of the locations dataframe
+        # Iterate over each painting in the list and check its object ID to see if it contains the given object ID
         for i in locationList:
             if objectID in i:
+                # Return true if we found the painting
                 return True
-        return False
+        return False # We didn't find the painting
 
 if __name__ == '__main__':
+    # Create a Lookup object
     lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
 
     number = '200343'
+    # Print each painting found for the given number (searching without decimals)
     for i in lookup.get_info(number, decimals=False):
         print(lookup.to_string(i), '\n')
 
     print('\n')
 
+    # Print each painting found for the given rack
     for i in lookup.get_rack('46B'):
         print(lookup.to_string(i), '\n')

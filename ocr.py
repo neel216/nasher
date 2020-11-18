@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
 from imutils.contours import sort_contours
 import numpy as np
 import imutils
@@ -5,27 +8,21 @@ import cv2
 
 
 def process_ocr(model, frame, test=False):
-    # load the input image from disk, convert it to grayscale, and blur
-    # it to reduce noise
+    '''
+    Processes an image using a handwriting recognition model to detect numbers in the image
 
+    :param model: the Tensorflow Keras model used to make predictions on the image
+    :param frame: the image to process and run predictions on
+    :param test: whether the functions should be in testing mode or not
+    :return: a string containing the numbers detect in the image
+    '''
     image = frame
-    '''
-    if test:
-        cv2.imshow('Image', image)
-        cv2.waitKey(0)
-    '''
+
+    # convert the image to grayscale, and perform a Gaussian blur
+    # to reduce noise
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    '''
-    if test:
-        cv2.imshow('Gray', gray)
-        cv2.waitKey(0)
-    '''
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    '''
-    if test:
-        cv2.imshow('Blurred', blurred)
-        cv2.waitKey(0)
-    '''
+
     '''
     circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, 1, 10, param1=50, param2=12, minRadius=0,maxRadius=20)
     circles = np.uint16(np.around(circles))
@@ -33,16 +30,13 @@ def process_ocr(model, frame, test=False):
         cv2.circle(blurred, (i[0]. i[1]), i[2], (0,255,0), 2)
     '''
 
-    # perform edge detection, find contours in the edge map, and sort the
-    # resulting contours from left-to-right
+    # perform edge detection
     edged = cv2.Canny(blurred, 30, 50, apertureSize=3) # 30, 150 ; 10, 100, 5
-    '''
-    if test:
-        cv2.imshow('Canny', edged)
-        cv2.waitKey(0)
-    '''
-    #print(edged)
+
+    # find contours in the edge map, and sort the
+    # resulting contours from left-to-right
     cnts = cv2.findContours(edged.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # If we found at least 1 number
     if len(cnts) > 0:
         #print(cnts)
         cnts = imutils.grab_contours(cnts)
@@ -119,22 +113,22 @@ def process_ocr(model, frame, test=False):
             i = np.argmax(pred)
             prob = pred[i]
             label = labelNames[i]
-            #if label in '0123456789':
-                #print(label, prob * 100)
+
+            # if the character is a number and we are more than 55% confident in the prediction
             if label in '0123456789' and prob > 0.55:
                 # draw the prediction on the image
-                #print("[INFO] {} - {:.2f}%".format(label, prob * 100))
-                locs.append([label, x])
                 cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(image, label, (x - 10, y - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 2)
+                cv2.putText(image, label,
+                            (x - 10, y - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.2,
+                            (0, 255, 0), 2)
+                locs.append([label, x])
 
-                # show the image
-        #print(f'Time to process image: {end - start} seconds')
-        #print(locs)
         out = []
+        # Return the number we detect
         for c in locs:
            out.append(str(c[0]))
         return "".join(out)
     else:
+        # If we found 0 numbers
         return

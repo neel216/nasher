@@ -1,57 +1,31 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[131]:
-
-
+'''
+Given CSV files for location and dimensions data from the Nasher Museum of Art's TMS Database,
+this file cleans the data and downloads it as cleaned CSV files
+'''
 import pandas as pd
 import numpy as np
 pd.set_option('display.max_colwidth', None)
 
 
-# In[132]:
+dimensions = pd.read_csv('dimensions.csv', header=None) # Read in dirty dimensions data
+del dimensions[0] # delete the index column
 
-
-dimensions = pd.read_csv('dimensions.csv', header=None)
-dimensions
-
-
-# In[134]:
-
-
-del dimensions[0]
-dimensions
-
-
-# In[135]:
-
-
+# Determine if all values in the second column are the same
 for i in dimensions[1]:
     if i != 'Public-Facing Dimension Label Text':
         print('all values are not the same')
 # All values in this column are the same, therefore we can delete it
-
-
-# In[136]:
-
-
 del dimensions[1]
-dimensions
 
-
-# In[137]:
-
-
+# Rename columns and create new columns with NaN values
 dimensions.columns = ['objectID', 'dimensions']
 dimensions['width'] = np.nan
 dimensions['height'] = np.nan
 dimensions['depth'] = np.nan
-dimensions
 
-
-# In[138]:
-
-
+# Clean dimensions data
 for i in dimensions['dimensions']:
     dims = []
     print('----', i, '-----')
@@ -143,66 +117,32 @@ for i in dimensions['dimensions']:
     print(dimensions.index[dimensions['dimensions'] == i].tolist()[0])
     dimensions['dimensions'][dimensions.index[dimensions['dimensions'] == i].tolist()[0]] = ' x '.join(map(str, dims)) + ' cm'
 
-
-# In[139]:
-
-
-dimensions
-
-
-# In[140]:
-
-
+# Look at summary of information in dimensions dataframe
 dimensions.info()
 
-
-# In[141]:
-
-
+# Download dimensions dataframe to CSV
 #dimensions.to_csv('dimensionsCleaned.csv')
 
 
-# In[199]:
 
 
-locations = pd.read_csv('locations.csv', header=None)
-locations
+locations = pd.read_csv('locations.csv', header=None) # Read in dirty locations data
 
-
-# In[200]:
-
-
-locations.info()
-
-
-# In[201]:
-
-
+# Insert new column with NaN values and delete unnecessary columns
 locations.insert(1, 'room', np.nan)
 del locations[1]
 del locations[4]
-locations
 
-
-# In[202]:
-
-
+# Insert new columns with NaN values
 locations.insert(3, 'locationID', np.nan)
 locations.insert(4, 'locationLetter', np.nan)
-locations
 
-
-# In[203]:
-
-
+# Rename column names
 locations.columns = ['objectID', 'room', 'locationType', 'locationID', 'locationLetter', 'artist', 'info']
-locations
-
-
-# In[204]:
 
 
 index = 0
+# Clean locations data
 for i in locations['locationType']:
     if pd.notnull(i):
         loc = i.split(', ')
@@ -237,27 +177,11 @@ for i in locations['locationType']:
     locations['locationID'][index] = loc[2]
     index += 1
 
-
-# In[205]:
-
-
-locations
-
-
-# In[206]:
-
-
-#locations.to_csv('locationsCleaned.csv')
-
-
-# In[207]:
-
-
+# Look at summary of information in locations dataframe
 locations.info()
 
-
-# In[ ]:
-
+# Download locations data to CSV
+#locations.to_csv('locationsCleaned.csv')
 
 
 

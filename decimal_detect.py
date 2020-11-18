@@ -1,4 +1,6 @@
-#from ocr import process_ocr
+#!/usr/bin/env python3
+# coding: utf-8
+
 import cv2
 import time
 import numpy as np
@@ -7,6 +9,12 @@ import numpy as np
 #img = cv2.imread("/home/pi/Desktop/nasher/images/screenshot.png")
 
 def find_decimals(img):
+    '''
+    Finds decimal points in a given image
+
+    :param img: the image to process and find decimal points in
+    :return: A list of coordinates that describe the location of each decimal point
+    '''
     #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Blur using 3 * 3 kernel.
@@ -42,4 +50,5 @@ def find_decimals(img):
     #cv2.waitKey(0)
     #cv2.destroyAllWindows()
     else:
+        # If no circles are detected
         return None
