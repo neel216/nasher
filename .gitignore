@@ -4,3 +4,4 @@ credentials.json
 .ds_store
 *.pyc
 *.pyo
+__pycache__/
