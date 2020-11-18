@@ -21,16 +21,17 @@ class Lookup:
         :param loc_path: the path of the locations CSV file
         :return: returns nothing
         '''
-        #pd.set_option('display.max_colwidth', None)
-
+        # Read in dataframes from the given paths
         self.dim_path = dim_path
         self.dimensions = pd.read_csv(dim_path)
         self.loc_path = loc_path
         self.locations = pd.read_csv(loc_path)
+
+        # Removes the index column from each dataframe
         del self.dimensions['Unnamed: 0']
         del self.locations['Unnamed: 0']
 
-    def get_rows_contains(self, df, col, val):
+    def get_rows_contains(self, df, col, val, _decimals=True):
         '''
         Returns the rows of a dataframe that contain a value
         in a certain column
@@ -40,7 +41,11 @@ class Lookup:
         :param val: the value to check for in the column
         :return: a dataframe containing the rows that have the value in the column
         '''
-        return df[df[col].str.contains(val)]
+        # If we want to compare numbers and their decimal points
+        if _decimals:
+            return df[df[col].str.contains(val)]
+        # If we want to compare numbers without decimal points
+        return df[df[col].str.replace('.', '').str.contains(val)]
     
     def get_rows_exact(self, df, col, val):
         '''
@@ -54,7 +59,7 @@ class Lookup:
         '''
         return df.loc[df[col] == val]
     
-    def get_info(self, objectID):
+    def get_info(self, objectID, decimals=True):
         '''
         Given a painting's object number, returns a list of dictionaries containing
         information about the painting(s) with that object number
@@ -67,7 +72,7 @@ class Lookup:
         #else:
         objectNumber = objectID
         
-        dims = self.get_rows_contains(self.dimensions, 'objectID', objectNumber)
+        dims = self.get_rows_contains(self.dimensions, 'objectID', objectNumber, _decimals=decimals)
         _dims = {}
         if len(dims) == 0:
             dims_ = 'Object Number not found'
@@ -75,7 +80,7 @@ class Lookup:
             for i in dims.iterrows():
                 _dims[i[1]['objectID']] = [i[1]['width'], i[1]['height'], i[1]['depth']]
 
-        loc = self.get_rows_contains(self.locations, 'objectID', objectNumber)
+        loc = self.get_rows_contains(self.locations, 'objectID', objectNumber, _decimals=decimals)
         items = []
         for i in loc.iterrows():
             index = i[0]
@@ -245,8 +250,8 @@ class Lookup:
 if __name__ == '__main__':
     lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
 
-    number = '2003.4.3'
-    for i in lookup.get_info(number):
+    number = '200343'
+    for i in lookup.get_info(number, decimals=False):
         print(lookup.to_string(i), '\n')
 
     print('\n')

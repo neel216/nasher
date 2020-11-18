@@ -28,7 +28,7 @@ class Selection:
 
             c = 1
             if self.lookup.object_exists(objectID):
-                self.paintings = self.lookup.get_info(objectID)
+                self.paintings = self.lookup.get_info(objectID, decimals=False)
                 for i in self.paintings:
                     if type(i['dimensions']) == type(' '):
                         dims = i['dimensions']
