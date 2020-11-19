@@ -66,6 +66,9 @@ class Selection:
 
                 select = ttk.Button(self.selection, text='Select', command=self.select)
                 select.grid(row=3, column=0, columnspan=2)
+
+                entry = ttk.Button(self.selection, text='Manual Entry', command=print('hi'))
+                entry.grid(row=3, column=0, sticky='w')
             else:
                 # If no paintings in the database were found
                 self.options.insert(c, f'Found no results for object number {objectID}')
@@ -99,7 +102,7 @@ class Selection:
         elif rackPaintings == None and location == None and objectID != None:
             # If we're looking up paintings based on an object ID number (using Painting Lookup feature)
 
-            # Render the correc title for the action
+            # Render the correct title for the action
             title = ttk.Label(self.selection, text='Painting Search Results')
             title.grid(row=1, column=0, columnspan=2)
 

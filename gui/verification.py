@@ -36,11 +36,11 @@ class Verification:
         restart.grid(row=0, column=0, columnspan=2, sticky='w')
 
         # Add title text
-        title = ttk.Label(self.verification, text='Verify OCR Value')
+        title = ttk.Label(self.verification, text='Verify OCR Numbers')
         title.grid(row=1, column=0, columnspan=2)
 
         # Add verification prompt message
-        prompt = ttk.Label(self.verification, text='Is the object number correct?')
+        prompt = ttk.Label(self.verification, text='Are the numbers correct? (disregard decimal points)')
         prompt.grid(row=2, column=0, columnspan=2)
 
         # Display the object ID to verify
