@@ -11,7 +11,7 @@ class Selection:
     Contains functions to create the painting Selection screen of the GUI,
     and link the painting Selection screen to the main menu of the GUI
     '''
-    def __init__(self, parent, menu, mainMenu, lookup, width, location=None, objectID=None, rackPaintings=None):
+    def __init__(self, parent, menu, mainMenu, lookup, width, location=None, objectID=None, rackPaintings=None, entryPage=None):
         '''
         Creates the painting Selection screen of the GUI
 
@@ -32,13 +32,14 @@ class Selection:
         self.menu = menu
         self.location = location
         self.parent = parent
+        self.entryPage = entryPage
 
         # Add restart button to top left
         restart = ttk.Button(self.selection, text='Restart', command=self.hide)
         restart.grid(row=0, column=0, sticky='w')
 
         # Render the correct title and render the correct buttons with the correct functions for the correct action
-        if rackPaintings == None and location != None and objectID != None:
+        if rackPaintings == None and location != None and objectID != None and entryPage != None:
             # If we're changing the location of a painting
 
             # Render the correct title for the action
@@ -67,7 +68,7 @@ class Selection:
                 select = ttk.Button(self.selection, text='Select', command=self.select)
                 select.grid(row=3, column=0, columnspan=2)
 
-                entry = ttk.Button(self.selection, text='Manual Entry', command=print('hi'))
+                entry = ttk.Button(self.selection, text='Manual Entry', command=self.entryPage.show)
                 entry.grid(row=3, column=0, sticky='w')
             else:
                 # If no paintings in the database were found

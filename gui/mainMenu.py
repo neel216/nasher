@@ -238,9 +238,8 @@ class MainMenu:
         self.objectID = cam.run() # Start the camera and get the object ID out of the image of the painting's tag
 
         # Update the rest of the screens to reflect the new object ID
-        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID)
-        self.verification = verification.Verification(self.parent, self.mainMenu, self, self.entry, self.selection, self.objectID)
-        self.verification.show() # show the verification screen to make sure the number is correct
+        self.selection = selection.Selection(self.parent, self.mainMenu, self, self.lookup, self.width, location=self.location, objectID=self.objectID, entryPage=self.entry)
+        self.selection.show() # show the verification screen to make sure the number is correct
 
     def correct_objectID(self, objectID):
         '''
