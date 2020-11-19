@@ -127,7 +127,6 @@ class MainMenu:
         self.location.destroy()
         self.selection.destroy()
         self.entry.destroy()
-        self.verification.destroy()
 
     def lookup_painting(self):
         '''
