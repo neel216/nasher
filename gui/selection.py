@@ -40,7 +40,7 @@ class Selection:
 
         # Render the correct title and render the correct buttons with the correct functions for the correct action
         if rackPaintings == None and location != None and objectID != None and entryPage != None:
-            # If we're changing the location of a painting
+            # If we're changing the location of a painting and have just exited the camera
 
             # Render the correct title for the action
             title = ttk.Label(self.selection, text='Select the correct painting')
@@ -70,6 +70,38 @@ class Selection:
 
                 entry = ttk.Button(self.selection, text='Manual Entry', command=self.entryPage.show)
                 entry.grid(row=3, column=0, sticky='w')
+            else:
+                # If no paintings in the database were found
+                self.options.insert(c, f'Found no results for object number {objectID}')
+        elif rackPaintings == None and location != None and objectID != None and entryPage == None:
+            # If we're changing the location of a painting and have correct the object ID number
+
+            # Render the correct title for the action
+            title = ttk.Label(self.selection, text='Select the correct painting')
+            title.grid(row=1, column=0, columnspan=2)
+
+            # Create and render the selection box with a scrollbar
+            self.options = tk.Listbox(self.selection, height=int(0.015 * width), font=tkFont.Font(size=int(0.0165 * width)))
+            self.scrollbar = tk.Scrollbar(self.selection, orient=tk.VERTICAL)
+            self.options.config(yscrollcommand=self.scrollbar.set)
+            self.scrollbar.config(command=self.options.yview)
+
+            c = 1
+            # Add the paintings to the selection box
+            if self.lookup.object_exists(objectID, decimals=False):
+                self.paintings = self.lookup.get_info(objectID, decimals=False)
+                for i in self.paintings:
+                    if type(i['dimensions']) == type(' '):
+                        dims = i['dimensions']
+                    else:
+                        dims = ' x '.join(str(d) for d in i['dimensions'])
+                    output = f"{i['objectID']} in {i['room']} on {i['location']}. Dimensions (cm): {dims}"
+                    self.options.insert(c, output)
+                    c += 1
+
+                select = ttk.Button(self.selection, text='Select', command=self.select)
+                select.grid(row=3, column=0, columnspan=2)
+
             else:
                 # If no paintings in the database were found
                 self.options.insert(c, f'Found no results for object number {objectID}')
