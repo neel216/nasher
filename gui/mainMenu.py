@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
-from gui import verification, entry, selection, location, success, comingSoon
+from gui import entry, selection, location, success, comingSoon
 import tkinter as tk
 from tkinter import ttk
 from lookup import Lookup
