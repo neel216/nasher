@@ -23,6 +23,7 @@ class Selection:
         :param location: the Location/rack entry screen (if changing the location of a painting)
         :param objectID: the object ID to lookup in the database
         :param rackPaintings: the paintings on a given rack (if looking up the paintings on a certain rack)
+        :param entryPage: the entry page to go to if the user wants to manually enter the painting object ID
         :return: returns nothing
         '''
         self.lookup = lookup
@@ -68,11 +69,13 @@ class Selection:
                 select = ttk.Button(self.selection, text='Select', command=self.select)
                 select.grid(row=3, column=0, columnspan=2)
 
-                entry = ttk.Button(self.selection, text='Manual Entry', command=self.entryPage.show)
-                entry.grid(row=3, column=0, sticky='w')
             else:
                 # If no paintings in the database were found
                 self.options.insert(c, f'Found no results for object number {objectID}')
+            
+            # Create and render manual entry button
+            entry = ttk.Button(self.selection, text='Manual Entry', command=self.entryPage.show)
+            entry.grid(row=3, column=0, sticky='w')
         elif rackPaintings == None and location != None and objectID != None and entryPage == None:
             # If we're changing the location of a painting and have correct the object ID number
 
