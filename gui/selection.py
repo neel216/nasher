@@ -77,7 +77,7 @@ class Selection:
             entry = ttk.Button(self.selection, text='Manual Entry', command=self.entryPage.show)
             entry.grid(row=3, column=0, sticky='w')
         elif rackPaintings == None and location != None and objectID != None and entryPage == None:
-            # If we're changing the location of a painting and have correct the object ID number
+            # If we're changing the location of a painting and have corrected the object ID number
 
             # Render the correct title for the action
             title = ttk.Label(self.selection, text='Select the correct painting')
@@ -91,8 +91,8 @@ class Selection:
 
             c = 1
             # Add the paintings to the selection box
-            if self.lookup.object_exists(objectID, decimals=False):
-                self.paintings = self.lookup.get_info(objectID, decimals=False)
+            if self.lookup.object_exists(objectID):
+                self.paintings = self.lookup.get_info(objectID)
                 for i in self.paintings:
                     if type(i['dimensions']) == type(' '):
                         dims = i['dimensions']
