@@ -116,18 +116,33 @@ def process_ocr(model, frame, test=False):
 
             # if the character is a number and we are more than 55% confident in the prediction
             if label in '0123456789' and prob > 0.55:
-                # draw the prediction on the image
-                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(image, label,
-                            (x - 10, y - 10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1.2,
-                            (0, 255, 0), 2)
-                locs.append([label, x])
+                locs.append([label, x, y, x + w, y + h])
 
+        remove = []
+        for i in range(len(locs)):
+            for x in range(len(locs)):
+                if x > i:
+                    if locs[x][1] >= locs[i][1] and locs[x][1] <= locs[i][3] and locs[x][2] >= locs[i][2] and locs[x][2] <= locs[i][4]:
+                        areaX = (locs[x][3] - locs[x][1]) * (locs[x][4] - locs[x][2])
+                        areaI = (locs[i][3] - locs[i][1]) * (locs[i][4] - locs[i][2])
+                        if areaX >= areaI:
+                            remove.append(locs[i])
+                        else:
+                            remove.append(locs[x])
+            
+        for i in remove:
+            locs.remove(i)
+        # if the x position and y position of a number is inside the bounding box of another number, take whichever box has bigger area
         out = []
         # Return the number we detect
         for c in locs:
-           out.append(str(c[0]))
+            # draw the prediction on the image
+            cv2.rectangle(image, (c[1], c[2]), (c[3], c[4]), (0, 255, 0), 2)
+            cv2.putText(image, c[0],
+                        (c[1] - 10, c[2] - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1.2,
+                        (0, 255, 0), 2)
+            out.append(str(c[0]))
         return "".join(out)
     else:
         # If we found 0 numbers
