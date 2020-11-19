@@ -3,7 +3,6 @@
 '''
 TODO: functions for other rack information (what rack has the most paintings, what rack has the most space)
 '''
-
 import pandas as pd
 import numpy as np
 import re
@@ -264,26 +263,32 @@ class Lookup:
         self.dimensions.to_csv(self.dim_path) # Override the dimensions CSV with the data from the dimensions dataframe
         return True
     
-    def object_exists(self, objectID):
+    def object_exists(self, objectID, decimals=True):
         '''
         Checks to see if a given object ID number exists in the locations database
 
         :param objectID: string that describes an object number
+        :param decimals: whether to search the database with decimals in the object IDs or not
         :return: returns a boolean describing whether or not the given object ID is in the location database
         '''
         locationList = self.locations['objectID'].tolist() # Creates a list from the object ID column of the locations dataframe
         # Iterate over each painting in the list and check its object ID to see if it contains the given object ID
         for i in locationList:
-            if objectID in i:
-                # Return true if we found the painting
-                return True
+            if decimals:
+                if objectID in i:
+                    # Return true if we found the painting
+                    return True
+            else:
+                if objectID in i.replace('.', ''):
+                    # Return true if we found the painting
+                    return True
         return False # We didn't find the painting
 
 if __name__ == '__main__':
     # Create a Lookup object
     lookup = Lookup('data/dimensionsCleaned.csv', 'data/locationsCleaned.csv')
 
-    number = '200343'
+    number = '2006711'
     # Print each painting found for the given number (searching without decimals)
     for i in lookup.get_info(number, decimals=False):
         print(lookup.to_string(i), '\n')

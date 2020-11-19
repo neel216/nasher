@@ -53,7 +53,7 @@ class Selection:
 
             c = 1
             # Add the paintings to the selection box
-            if self.lookup.object_exists(objectID):
+            if self.lookup.object_exists(objectID, decimals=False):
                 self.paintings = self.lookup.get_info(objectID, decimals=False)
                 for i in self.paintings:
                     if type(i['dimensions']) == type(' '):
